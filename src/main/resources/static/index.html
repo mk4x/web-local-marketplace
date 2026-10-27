@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Ktor + React</title>
+  <!-- React from a CDN and Babel to compile JSX in the browser: no npm or build step needed -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    function App() {
+      const [message, setMessage] = React.useState("Loading...");
+
+      React.useEffect(() => {
+        fetch("/api/hello")
+          .then((res) => res.json())
+          .then((data) => setMessage(data.message))
+          .catch(() => setMessage("Could not reach the backend"));
+      }, []);
+
+      return <h1>{message}</h1>;
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
