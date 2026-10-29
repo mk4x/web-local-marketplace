@@ -4,3 +4,5 @@ build/
 .idea/
 *.iml
 out/
+
+kls_database.db
