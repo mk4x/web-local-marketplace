@@ -1,21 +1,24 @@
-package com.example
+import io.ktor.http.ContentType
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
 
-import io.ktor.http.*
-import io.ktor.server.engine.*
-import io.ktor.server.http.content.*
-import io.ktor.server.netty.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+private const val DEFAULT_PORT = 8080
 
 fun main() {
     // Read PORT from the environment so Docker or cloud hosts can change it
-    val port = System.getenv("PORT")?.toIntOrNull() ?: 8080
+    val port = System.getenv("PORT")?.toIntOrNull() ?: DEFAULT_PORT
 
     embeddedServer(Netty, port = port, host = "0.0.0.0") {
         routing {
             // The API endpoint the React page calls
             get("/api/hello") {
-                call.respondText("""{"message":"Hello from Ktor"}""", ContentType.Application.Json)
+                call.respondText(
+                    """{"message":"Hello from Ktor"}""",
+                    ContentType.Application.Json,
+                )
             }
         }
     }.start(wait = true)
