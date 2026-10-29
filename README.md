@@ -2,7 +2,6 @@ Routes:
 
 | URL              | What it does                            |
 |------------------|-----------------------------------------|
-| `GET /`          | Serves the React page                   |
 | `GET /api/hello` | Returns `{"message":"Hello from Ktor"}` |
 
 ## Run locally
