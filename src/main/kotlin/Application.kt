@@ -1,5 +1,3 @@
-package com.g7
-
 import io.ktor.server.routing
 
 fun main() {
