@@ -15,12 +15,10 @@ fun main() {
             get("/api/hello") {
                 call.respondText(
                     """{"message":"Hello from Ktor"}""",
-                    ContentType.Application.Json,
+                    ContentType.Application.Json
                 )
             }
-
-            // Serves src/main/resources/static/index.html at http://localhost:8080/
-            staticResources("/", "static")
         }
-    }.start(wait = true)
+    }
+        .start(wait = true)
 }
