@@ -22,6 +22,10 @@ dependencies {
     implementation("io.ktor:ktor-server-netty")
     implementation("ch.qos.logback:logback-classic:1.5.37")
 
+    implementation("org.flywaydb:flyway-core:11.14.0")
+    implementation("org.flywaydb:flyway-database-postgresql:11.14.0")
+    implementation("org.postgresql:postgresql:42.7.8")
+
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation(kotlin("test-junit5"))
 }
