@@ -1,4 +1,4 @@
-package com.example
+package com.g7
 
 import io.ktor.server.routing
 

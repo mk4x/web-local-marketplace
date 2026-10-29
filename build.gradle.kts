@@ -5,7 +5,7 @@ plugins {
 }
 
 application {
-    mainClass = "com.example.ApplicationKt"
+    mainClass = "com.g7.ApplicationKt"
 }
 
 kotlin {
