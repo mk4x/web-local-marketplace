@@ -1,11 +1,6 @@
 package com.example
 
-import io.ktor.http.*
-import io.ktor.server.engine.*
-import io.ktor.server.http.content.*
-import io.ktor.server.netty.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.server.routing
 
 fun main() {
     // Read PORT from the environment so Docker or cloud hosts can change it
@@ -15,7 +10,10 @@ fun main() {
         routing {
             // The API endpoint the React page calls
             get("/api/hello") {
-                call.respondText("""{"message":"Hello from Ktor"}""", ContentType.Application.Json)
+                call.respondText(
+                    """{"message":"Hello from Ktor"}""",
+                    ContentType.Application.Json,
+                )
             }
 
             // Serves src/main/resources/static/index.html at http://localhost:8080/
