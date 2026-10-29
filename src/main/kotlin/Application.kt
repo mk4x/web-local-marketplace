@@ -17,10 +17,9 @@ fun main() {
             get("/api/hello") {
                 call.respondText(
                     """{"message":"Hello from Ktor"}""",
-                    ContentType.Application.Json
+                    ContentType.Application.Json,
                 )
             }
         }
-    }
-        .start(wait = true)
+    }.start(wait = true)
 }
