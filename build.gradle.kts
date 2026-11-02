@@ -3,6 +3,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("io.gitlab.arturbosch.detekt") version "1.23.8"
     id("io.ktor.plugin") version "3.6.0"
+    id("de.quati.pgen") version "0.51.0"
 }
 
 application {
@@ -22,9 +23,26 @@ dependencies {
     implementation("io.ktor:ktor-server-netty")
     implementation("ch.qos.logback:logback-classic:1.5.37")
 
+    // Database and migrations
     implementation("org.flywaydb:flyway-core:13.11.1")
     implementation("org.flywaydb:flyway-database-postgresql:13.11.1")
     implementation("org.postgresql:postgresql:42.7.14")
+
+    // pgen JDBC runtime
+    implementation("de.quati.pgen:jdbc:0.51.0")
+
+    // JetBrains Exposed
+    val exposedVersion = "1.0.0-rc-4"
+
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-json:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    implementation("de.quati:kotlin-util:2.0.0")
 
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation(kotlin("test-junit5"))

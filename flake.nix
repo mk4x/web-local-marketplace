@@ -16,6 +16,14 @@
             pkgs.jdk21
             pkgs.gradle
           ];
+
+          DB_URL = "jdbc:postgresql://localhost:5432/app";
+          DB_USER = "app";
+          DB_PASSWORD = "app";
+
+          POSTGRES_DB = "app";
+          POSTGRES_USER = "app";
+          POSTGRES_PASSWORD = "app";
         };
       }
     );
