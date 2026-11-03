@@ -64,7 +64,7 @@ check (
 );
 
 create domain locale_tag as text
-check (value ~ '^[a-z]{2,3}(-[a-za-z0-9]{2,8})*$');
+check (value ~ '^[a-z]{2,3}(-[a-zA-Z0-9]{2,8})*$');
  
 create domain bio_text as text
 check (length(value) <= 2000);
