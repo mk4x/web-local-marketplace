@@ -54,7 +54,6 @@ dependencies {
     testImplementation(kotlin("test-junit5"))
 }
 
-
 sourceSets {
     main {
         java.srcDir(generatedJooqDir)
