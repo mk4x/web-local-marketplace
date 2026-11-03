@@ -29,7 +29,7 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.14")
 
     // pgen JDBC runtime
-    implementation("de.quati.pgen:jdbc:0.51.0")
+    implementation("de.quati.pgen:jdbc:0.52.1")
 
     // JetBrains Exposed
     val exposedVersion = "1.0.0-rc-4"
