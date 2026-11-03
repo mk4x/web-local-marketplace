@@ -109,6 +109,12 @@ pgen {
     setConnectionTypeJdbc()
 }
 
+ktlint {
+    filter {
+        exclude("**/generated/**")
+    }
+}
+
 detekt {
     buildUponDefaultConfig = true
     parallel = true
