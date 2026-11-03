@@ -6,3 +6,9 @@ build/
 out/
 
 kls_database.db
+
+.classpath
+.metals
+.project
+.settings
+bin/
