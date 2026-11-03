@@ -7,6 +7,14 @@ buildscript {
     }
 }
 
+val generatedJooqDir = file("src/generated/jooq")
+
+sourceSets {
+    main {
+        java.srcDir(generatedJooqDir)
+    }
+}
+
 plugins {
     kotlin("jvm") version "2.4.0"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
@@ -46,7 +54,6 @@ dependencies {
     testImplementation(kotlin("test-junit5"))
 }
 
-val generatedJooqDir = layout.buildDirectory.dir("generated/jooq")
 
 sourceSets {
     main {
@@ -83,7 +90,7 @@ jooq {
 
             target {
                 packageName = "com.g7.database.jooq"
-                directory = generatedJooqDir.get().asFile.absolutePath
+                directory = generatedJooqDir.absolutePath
             }
         }
     }
@@ -97,14 +104,6 @@ flyway {
 
 tasks.named("jooqCodegen") {
     dependsOn("flywayMigrate")
-}
-
-tasks.named("compileKotlin") {
-    dependsOn(tasks.named("jooqCodegen"))
-}
-
-tasks.named("compileJava") {
-    dependsOn(tasks.named("jooqCodegen"))
 }
 
 ktlint {
