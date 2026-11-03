@@ -1,2 +1,5 @@
+[**/generated/**]
+ktlint = disabled
+
 [*.{kt,kts}]
 max_line_length = 80

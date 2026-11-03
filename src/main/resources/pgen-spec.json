@@ -1,0 +1,1501 @@
+{
+  "databases": [
+    {
+      "name": "main",
+      "tables": [
+        {
+          "name": "public.categories",
+          "columns": [
+            {
+              "name": "path",
+              "type": {
+                "kind": "domain",
+                "ref": "public.category_path",
+                "base": "public.ltree"
+              }
+            },
+            {
+              "name": "parent",
+              "type": {
+                "kind": "domain",
+                "ref": "public.category_path",
+                "base": "public.ltree"
+              },
+              "nullable": true
+            },
+            {
+              "name": "label",
+              "type": {
+                "kind": "domain",
+                "ref": "public.display_name",
+                "base": "text"
+              }
+            }
+          ],
+          "primaryKey": {
+            "name": "categories_pkey",
+            "columns": [
+              "path"
+            ]
+          },
+          "foreignKeys": [
+            {
+              "name": "categories_parent_fkey",
+              "targetTable": "public.categories",
+              "references": [
+                {
+                  "sourceColumn": "parent",
+                  "targetColumn": "path"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "public.current_listings",
+          "columns": [
+            {
+              "name": "listing_id",
+              "type": "uuid",
+              "nullable": true
+            },
+            {
+              "name": "seller_id",
+              "type": "uuid",
+              "nullable": true
+            },
+            {
+              "name": "version",
+              "type": {
+                "kind": "domain",
+                "ref": "public.version_no",
+                "base": "int8"
+              },
+              "nullable": true
+            },
+            {
+              "name": "updated_at",
+              "type": "timestamptz",
+              "nullable": true
+            },
+            {
+              "name": "title",
+              "type": {
+                "kind": "domain",
+                "ref": "public.listing_title",
+                "base": "text"
+              },
+              "nullable": true
+            },
+            {
+              "name": "description",
+              "type": {
+                "kind": "domain",
+                "ref": "public.listing_description",
+                "base": "text"
+              },
+              "nullable": true
+            },
+            {
+              "name": "category",
+              "type": {
+                "kind": "domain",
+                "ref": "public.category_path",
+                "base": "public.ltree"
+              },
+              "nullable": true
+            },
+            {
+              "name": "tags",
+              "type": {
+                "kind": "domain",
+                "ref": "public.tag_list",
+                "base": {
+                  "kind": "array",
+                  "element": {
+                    "kind": "domain",
+                    "ref": "public.tag_list",
+                    "base": "public.tag"
+                  }
+                }
+              },
+              "nullable": true
+            },
+            {
+              "name": "attributes",
+              "type": {
+                "kind": "domain",
+                "ref": "public.attributes_doc",
+                "base": "jsonb"
+              },
+              "nullable": true
+            },
+            {
+              "name": "image_urls",
+              "type": {
+                "kind": "domain",
+                "ref": "public.url_list",
+                "base": {
+                  "kind": "array",
+                  "element": {
+                    "kind": "domain",
+                    "ref": "public.url_list",
+                    "base": "public.http_url"
+                  }
+                }
+              },
+              "nullable": true
+            },
+            {
+              "name": "kind",
+              "type": {
+                "kind": "enum",
+                "ref": "public.listing_kind"
+              },
+              "nullable": true
+            },
+            {
+              "name": "status",
+              "type": {
+                "kind": "enum",
+                "ref": "public.listing_status"
+              },
+              "nullable": true
+            },
+            {
+              "name": "condition",
+              "type": {
+                "kind": "enum",
+                "ref": "public.listing_condition"
+              },
+              "nullable": true
+            },
+            {
+              "name": "price",
+              "type": {
+                "kind": "domain",
+                "ref": "public.price",
+                "base": {
+                  "kind": "composite",
+                  "ref": "public.price_t"
+                }
+              },
+              "nullable": true
+            },
+            {
+              "name": "budget",
+              "type": {
+                "kind": "domain",
+                "ref": "public.budget",
+                "base": {
+                  "kind": "composite",
+                  "ref": "public.budget_t"
+                }
+              },
+              "nullable": true
+            },
+            {
+              "name": "price_negotiable",
+              "type": "bool",
+              "nullable": true
+            },
+            {
+              "name": "quantity",
+              "type": {
+                "kind": "domain",
+                "ref": "public.stock_quantity",
+                "base": "int4"
+              },
+              "nullable": true
+            },
+            {
+              "name": "delivery",
+              "type": {
+                "kind": "array",
+                "element": {
+                  "kind": "enum",
+                  "ref": "public.delivery_option"
+                }
+              },
+              "nullable": true
+            },
+            {
+              "name": "location",
+              "type": "public.geography",
+              "nullable": true
+            },
+            {
+              "name": "pickup_address",
+              "type": {
+                "kind": "domain",
+                "ref": "public.postal_address",
+                "base": {
+                  "kind": "composite",
+                  "ref": "public.postal_address_t"
+                }
+              },
+              "nullable": true
+            },
+            {
+              "name": "pickup_radius",
+              "type": {
+                "kind": "domain",
+                "ref": "public.distance_m",
+                "base": "int4"
+              },
+              "nullable": true
+            },
+            {
+              "name": "visible_during",
+              "type": "pg_catalog.tstzrange",
+              "nullable": true
+            },
+            {
+              "name": "pickup_windows",
+              "type": "pg_catalog.tstzmultirange",
+              "nullable": true
+            },
+            {
+              "name": "relist_every",
+              "type": {
+                "kind": "domain",
+                "ref": "public.relist_interval",
+                "base": "interval"
+              },
+              "nullable": true
+            },
+            {
+              "name": "is_deleted",
+              "type": "bool",
+              "nullable": true
+            },
+            {
+              "name": "search_vector",
+              "type": "pg_catalog.tsvector",
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "name": "public.current_users",
+          "columns": [
+            {
+              "name": "user_id",
+              "type": "uuid",
+              "nullable": true
+            },
+            {
+              "name": "version",
+              "type": {
+                "kind": "domain",
+                "ref": "public.version_no",
+                "base": "int8"
+              },
+              "nullable": true
+            },
+            {
+              "name": "updated_at",
+              "type": "timestamptz",
+              "nullable": true
+            },
+            {
+              "name": "email",
+              "type": {
+                "kind": "domain",
+                "ref": "public.email_address",
+                "base": "citext"
+              },
+              "nullable": true
+            },
+            {
+              "name": "display_name",
+              "type": {
+                "kind": "domain",
+                "ref": "public.display_name",
+                "base": "text"
+              },
+              "nullable": true
+            },
+            {
+              "name": "phone",
+              "type": {
+                "kind": "domain",
+                "ref": "public.phone_e164",
+                "base": "text"
+              },
+              "nullable": true
+            },
+            {
+              "name": "bio",
+              "type": {
+                "kind": "domain",
+                "ref": "public.bio_text",
+                "base": "text"
+              },
+              "nullable": true
+            },
+            {
+              "name": "avatar_url",
+              "type": {
+                "kind": "domain",
+                "ref": "public.http_url",
+                "base": "text"
+              },
+              "nullable": true
+            },
+            {
+              "name": "locale",
+              "type": {
+                "kind": "domain",
+                "ref": "public.locale_tag",
+                "base": "text"
+              },
+              "nullable": true
+            },
+            {
+              "name": "home_location",
+              "type": "public.geography",
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "name": "public.flyway_schema_history",
+          "columns": [
+            {
+              "name": "installed_rank",
+              "type": "int4"
+            },
+            {
+              "name": "version",
+              "type": "varchar",
+              "nullable": true
+            },
+            {
+              "name": "description",
+              "type": "varchar"
+            },
+            {
+              "name": "type",
+              "type": "varchar"
+            },
+            {
+              "name": "script",
+              "type": "varchar"
+            },
+            {
+              "name": "checksum",
+              "type": "int4",
+              "nullable": true
+            },
+            {
+              "name": "installed_by",
+              "type": "varchar"
+            },
+            {
+              "name": "installed_on",
+              "type": "timestamp",
+              "defaultExpr": "now()"
+            },
+            {
+              "name": "execution_time",
+              "type": "int4"
+            },
+            {
+              "name": "success",
+              "type": "bool"
+            }
+          ],
+          "primaryKey": {
+            "name": "flyway_schema_history_pk",
+            "columns": [
+              "installed_rank"
+            ]
+          }
+        },
+        {
+          "name": "public.geography_columns",
+          "columns": [
+            {
+              "name": "f_table_catalog",
+              "type": "pg_catalog.name",
+              "nullable": true
+            },
+            {
+              "name": "f_table_schema",
+              "type": "pg_catalog.name",
+              "nullable": true
+            },
+            {
+              "name": "f_table_name",
+              "type": "pg_catalog.name",
+              "nullable": true
+            },
+            {
+              "name": "f_geography_column",
+              "type": "pg_catalog.name",
+              "nullable": true
+            },
+            {
+              "name": "coord_dimension",
+              "type": "int4",
+              "nullable": true
+            },
+            {
+              "name": "srid",
+              "type": "int4",
+              "nullable": true
+            },
+            {
+              "name": "type",
+              "type": "text",
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "name": "public.geometry_columns",
+          "columns": [
+            {
+              "name": "f_table_catalog",
+              "type": "varchar",
+              "nullable": true
+            },
+            {
+              "name": "f_table_schema",
+              "type": "pg_catalog.name",
+              "nullable": true
+            },
+            {
+              "name": "f_table_name",
+              "type": "pg_catalog.name",
+              "nullable": true
+            },
+            {
+              "name": "f_geometry_column",
+              "type": "pg_catalog.name",
+              "nullable": true
+            },
+            {
+              "name": "coord_dimension",
+              "type": "int4",
+              "nullable": true
+            },
+            {
+              "name": "srid",
+              "type": "int4",
+              "nullable": true
+            },
+            {
+              "name": "type",
+              "type": "varchar",
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "name": "public.listing_versions",
+          "columns": [
+            {
+              "name": "listing_id",
+              "type": "uuid"
+            },
+            {
+              "name": "version",
+              "type": {
+                "kind": "domain",
+                "ref": "public.version_no",
+                "base": "int8"
+              }
+            },
+            {
+              "name": "prev_version",
+              "type": {
+                "kind": "domain",
+                "ref": "public.version_no",
+                "base": "int8"
+              },
+              "nullable": true
+            },
+            {
+              "name": "created_at",
+              "type": "timestamptz",
+              "defaultExpr": "now()"
+            },
+            {
+              "name": "created_by",
+              "type": "uuid",
+              "nullable": true
+            },
+            {
+              "name": "created_from",
+              "type": "pg_catalog.inet",
+              "nullable": true
+            },
+            {
+              "name": "change_reason",
+              "type": {
+                "kind": "domain",
+                "ref": "public.change_reason",
+                "base": "text"
+              },
+              "nullable": true
+            },
+            {
+              "name": "title",
+              "type": {
+                "kind": "domain",
+                "ref": "public.listing_title",
+                "base": "text"
+              }
+            },
+            {
+              "name": "description",
+              "type": {
+                "kind": "domain",
+                "ref": "public.listing_description",
+                "base": "text"
+              },
+              "defaultExpr": "''::text"
+            },
+            {
+              "name": "category",
+              "type": {
+                "kind": "domain",
+                "ref": "public.category_path",
+                "base": "public.ltree"
+              }
+            },
+            {
+              "name": "tags",
+              "type": {
+                "kind": "domain",
+                "ref": "public.tag_list",
+                "base": {
+                  "kind": "array",
+                  "element": {
+                    "kind": "domain",
+                    "ref": "public.tag_list",
+                    "base": "public.tag"
+                  }
+                }
+              },
+              "defaultExpr": "'{}'::tag[]"
+            },
+            {
+              "name": "attributes",
+              "type": {
+                "kind": "domain",
+                "ref": "public.attributes_doc",
+                "base": "jsonb"
+              },
+              "defaultExpr": "'{}'::jsonb"
+            },
+            {
+              "name": "image_urls",
+              "type": {
+                "kind": "domain",
+                "ref": "public.url_list",
+                "base": {
+                  "kind": "array",
+                  "element": {
+                    "kind": "domain",
+                    "ref": "public.url_list",
+                    "base": "public.http_url"
+                  }
+                }
+              },
+              "defaultExpr": "'{}'::http_url[]"
+            },
+            {
+              "name": "kind",
+              "type": {
+                "kind": "enum",
+                "ref": "public.listing_kind"
+              },
+              "defaultExpr": "'sale'::listing_kind"
+            },
+            {
+              "name": "status",
+              "type": {
+                "kind": "enum",
+                "ref": "public.listing_status"
+              },
+              "defaultExpr": "'draft'::listing_status"
+            },
+            {
+              "name": "condition",
+              "type": {
+                "kind": "enum",
+                "ref": "public.listing_condition"
+              },
+              "nullable": true
+            },
+            {
+              "name": "price",
+              "type": {
+                "kind": "domain",
+                "ref": "public.price",
+                "base": {
+                  "kind": "composite",
+                  "ref": "public.price_t"
+                }
+              },
+              "nullable": true
+            },
+            {
+              "name": "budget",
+              "type": {
+                "kind": "domain",
+                "ref": "public.budget",
+                "base": {
+                  "kind": "composite",
+                  "ref": "public.budget_t"
+                }
+              },
+              "nullable": true
+            },
+            {
+              "name": "price_negotiable",
+              "type": "bool",
+              "defaultExpr": "false"
+            },
+            {
+              "name": "quantity",
+              "type": {
+                "kind": "domain",
+                "ref": "public.stock_quantity",
+                "base": "int4"
+              },
+              "defaultExpr": "1"
+            },
+            {
+              "name": "delivery",
+              "type": {
+                "kind": "array",
+                "element": {
+                  "kind": "enum",
+                  "ref": "public.delivery_option"
+                }
+              },
+              "defaultExpr": "'{pickup}'::delivery_option[]"
+            },
+            {
+              "name": "location",
+              "type": "public.geography",
+              "nullable": true
+            },
+            {
+              "name": "pickup_address",
+              "type": {
+                "kind": "domain",
+                "ref": "public.postal_address",
+                "base": {
+                  "kind": "composite",
+                  "ref": "public.postal_address_t"
+                }
+              },
+              "nullable": true
+            },
+            {
+              "name": "pickup_radius",
+              "type": {
+                "kind": "domain",
+                "ref": "public.distance_m",
+                "base": "int4"
+              },
+              "nullable": true
+            },
+            {
+              "name": "visible_during",
+              "type": "pg_catalog.tstzrange",
+              "defaultExpr": "tstzrange(now(), NULL::timestamp with time zone)"
+            },
+            {
+              "name": "pickup_windows",
+              "type": "pg_catalog.tstzmultirange",
+              "nullable": true
+            },
+            {
+              "name": "relist_every",
+              "type": {
+                "kind": "domain",
+                "ref": "public.relist_interval",
+                "base": "interval"
+              },
+              "nullable": true
+            },
+            {
+              "name": "is_deleted",
+              "type": "bool",
+              "defaultExpr": "false"
+            }
+          ],
+          "primaryKey": {
+            "name": "listing_versions_pkey",
+            "columns": [
+              "listing_id",
+              "version"
+            ]
+          },
+          "foreignKeys": [
+            {
+              "name": "listing_versions_category_fkey",
+              "targetTable": "public.categories",
+              "references": [
+                {
+                  "sourceColumn": "category",
+                  "targetColumn": "path"
+                }
+              ]
+            },
+            {
+              "name": "listing_versions_created_by_fkey",
+              "targetTable": "public.users",
+              "references": [
+                {
+                  "sourceColumn": "created_by",
+                  "targetColumn": "id"
+                }
+              ]
+            },
+            {
+              "name": "listing_versions_listing_id_fkey",
+              "targetTable": "public.listings",
+              "references": [
+                {
+                  "sourceColumn": "listing_id",
+                  "targetColumn": "id"
+                }
+              ]
+            },
+            {
+              "name": "listing_versions_listing_id_prev_version_fkey",
+              "targetTable": "public.listing_versions",
+              "references": [
+                {
+                  "sourceColumn": "listing_id",
+                  "targetColumn": "listing_id"
+                },
+                {
+                  "sourceColumn": "listing_id",
+                  "targetColumn": "version"
+                },
+                {
+                  "sourceColumn": "prev_version",
+                  "targetColumn": "listing_id"
+                },
+                {
+                  "sourceColumn": "prev_version",
+                  "targetColumn": "version"
+                }
+              ]
+            }
+          ],
+          "uniqueConstraints": [
+            {
+              "name": "listing_versions_listing_id_prev_version_key"
+            }
+          ],
+          "checkConstraints": [
+            {
+              "name": "listing_versions_check"
+            },
+            {
+              "name": "listing_versions_check1"
+            },
+            {
+              "name": "listing_versions_check2"
+            },
+            {
+              "name": "listing_versions_check3"
+            },
+            {
+              "name": "listing_versions_check4"
+            },
+            {
+              "name": "listing_versions_check5"
+            },
+            {
+              "name": "listing_versions_check6"
+            },
+            {
+              "name": "listing_versions_delivery_check"
+            },
+            {
+              "name": "listing_versions_pickup_windows_check"
+            },
+            {
+              "name": "listing_versions_visible_during_check"
+            }
+          ]
+        },
+        {
+          "name": "public.listings",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "defaultExpr": "gen_random_uuid()"
+            },
+            {
+              "name": "seller_id",
+              "type": "uuid"
+            },
+            {
+              "name": "created_at",
+              "type": "timestamptz",
+              "defaultExpr": "now()"
+            }
+          ],
+          "primaryKey": {
+            "name": "listings_pkey",
+            "columns": [
+              "id"
+            ]
+          },
+          "foreignKeys": [
+            {
+              "name": "listings_seller_id_fkey",
+              "targetTable": "public.users",
+              "references": [
+                {
+                  "sourceColumn": "seller_id",
+                  "targetColumn": "id"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "public.listings_current",
+          "columns": [
+            {
+              "name": "listing_id",
+              "type": "uuid"
+            },
+            {
+              "name": "seller_id",
+              "type": "uuid"
+            },
+            {
+              "name": "version",
+              "type": {
+                "kind": "domain",
+                "ref": "public.version_no",
+                "base": "int8"
+              }
+            },
+            {
+              "name": "updated_at",
+              "type": "timestamptz"
+            },
+            {
+              "name": "title",
+              "type": {
+                "kind": "domain",
+                "ref": "public.listing_title",
+                "base": "text"
+              }
+            },
+            {
+              "name": "description",
+              "type": {
+                "kind": "domain",
+                "ref": "public.listing_description",
+                "base": "text"
+              }
+            },
+            {
+              "name": "category",
+              "type": {
+                "kind": "domain",
+                "ref": "public.category_path",
+                "base": "public.ltree"
+              }
+            },
+            {
+              "name": "tags",
+              "type": {
+                "kind": "domain",
+                "ref": "public.tag_list",
+                "base": {
+                  "kind": "array",
+                  "element": {
+                    "kind": "domain",
+                    "ref": "public.tag_list",
+                    "base": "public.tag"
+                  }
+                }
+              }
+            },
+            {
+              "name": "attributes",
+              "type": {
+                "kind": "domain",
+                "ref": "public.attributes_doc",
+                "base": "jsonb"
+              }
+            },
+            {
+              "name": "image_urls",
+              "type": {
+                "kind": "domain",
+                "ref": "public.url_list",
+                "base": {
+                  "kind": "array",
+                  "element": {
+                    "kind": "domain",
+                    "ref": "public.url_list",
+                    "base": "public.http_url"
+                  }
+                }
+              }
+            },
+            {
+              "name": "kind",
+              "type": {
+                "kind": "enum",
+                "ref": "public.listing_kind"
+              }
+            },
+            {
+              "name": "status",
+              "type": {
+                "kind": "enum",
+                "ref": "public.listing_status"
+              }
+            },
+            {
+              "name": "condition",
+              "type": {
+                "kind": "enum",
+                "ref": "public.listing_condition"
+              },
+              "nullable": true
+            },
+            {
+              "name": "price",
+              "type": {
+                "kind": "domain",
+                "ref": "public.price",
+                "base": {
+                  "kind": "composite",
+                  "ref": "public.price_t"
+                }
+              },
+              "nullable": true
+            },
+            {
+              "name": "budget",
+              "type": {
+                "kind": "domain",
+                "ref": "public.budget",
+                "base": {
+                  "kind": "composite",
+                  "ref": "public.budget_t"
+                }
+              },
+              "nullable": true
+            },
+            {
+              "name": "price_negotiable",
+              "type": "bool"
+            },
+            {
+              "name": "quantity",
+              "type": {
+                "kind": "domain",
+                "ref": "public.stock_quantity",
+                "base": "int4"
+              }
+            },
+            {
+              "name": "delivery",
+              "type": {
+                "kind": "array",
+                "element": {
+                  "kind": "enum",
+                  "ref": "public.delivery_option"
+                }
+              },
+              "defaultExpr": "'{pickup}'::delivery_option[]"
+            },
+            {
+              "name": "location",
+              "type": "public.geography",
+              "nullable": true
+            },
+            {
+              "name": "pickup_address",
+              "type": {
+                "kind": "domain",
+                "ref": "public.postal_address",
+                "base": {
+                  "kind": "composite",
+                  "ref": "public.postal_address_t"
+                }
+              },
+              "nullable": true
+            },
+            {
+              "name": "pickup_radius",
+              "type": {
+                "kind": "domain",
+                "ref": "public.distance_m",
+                "base": "int4"
+              },
+              "nullable": true
+            },
+            {
+              "name": "visible_during",
+              "type": "pg_catalog.tstzrange"
+            },
+            {
+              "name": "pickup_windows",
+              "type": "pg_catalog.tstzmultirange",
+              "nullable": true
+            },
+            {
+              "name": "relist_every",
+              "type": {
+                "kind": "domain",
+                "ref": "public.relist_interval",
+                "base": "interval"
+              },
+              "nullable": true
+            },
+            {
+              "name": "is_deleted",
+              "type": "bool"
+            },
+            {
+              "name": "search_vector",
+              "type": "pg_catalog.tsvector",
+              "nullable": true
+            }
+          ],
+          "primaryKey": {
+            "name": "listings_current_pkey",
+            "columns": [
+              "listing_id"
+            ]
+          },
+          "foreignKeys": [
+            {
+              "name": "listings_current_category_fkey",
+              "targetTable": "public.categories",
+              "references": [
+                {
+                  "sourceColumn": "category",
+                  "targetColumn": "path"
+                }
+              ]
+            },
+            {
+              "name": "listings_current_listing_id_fkey",
+              "targetTable": "public.listings",
+              "references": [
+                {
+                  "sourceColumn": "listing_id",
+                  "targetColumn": "id"
+                }
+              ]
+            },
+            {
+              "name": "listings_current_listing_id_version_fkey",
+              "targetTable": "public.listing_versions",
+              "references": [
+                {
+                  "sourceColumn": "listing_id",
+                  "targetColumn": "listing_id"
+                },
+                {
+                  "sourceColumn": "listing_id",
+                  "targetColumn": "version"
+                },
+                {
+                  "sourceColumn": "version",
+                  "targetColumn": "listing_id"
+                },
+                {
+                  "sourceColumn": "version",
+                  "targetColumn": "version"
+                }
+              ]
+            },
+            {
+              "name": "listings_current_seller_id_fkey",
+              "targetTable": "public.users",
+              "references": [
+                {
+                  "sourceColumn": "seller_id",
+                  "targetColumn": "id"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "public.spatial_ref_sys",
+          "columns": [
+            {
+              "name": "srid",
+              "type": "int4"
+            },
+            {
+              "name": "auth_name",
+              "type": "varchar",
+              "nullable": true
+            },
+            {
+              "name": "auth_srid",
+              "type": "int4",
+              "nullable": true
+            },
+            {
+              "name": "srtext",
+              "type": "varchar",
+              "nullable": true
+            },
+            {
+              "name": "proj4text",
+              "type": "varchar",
+              "nullable": true
+            }
+          ],
+          "primaryKey": {
+            "name": "spatial_ref_sys_pkey",
+            "columns": [
+              "srid"
+            ]
+          },
+          "checkConstraints": [
+            {
+              "name": "spatial_ref_sys_srid_check"
+            }
+          ]
+        },
+        {
+          "name": "public.user_versions",
+          "columns": [
+            {
+              "name": "user_id",
+              "type": "uuid"
+            },
+            {
+              "name": "version",
+              "type": {
+                "kind": "domain",
+                "ref": "public.version_no",
+                "base": "int8"
+              }
+            },
+            {
+              "name": "prev_version",
+              "type": {
+                "kind": "domain",
+                "ref": "public.version_no",
+                "base": "int8"
+              },
+              "nullable": true
+            },
+            {
+              "name": "created_at",
+              "type": "timestamptz",
+              "defaultExpr": "now()"
+            },
+            {
+              "name": "created_by",
+              "type": "uuid",
+              "nullable": true
+            },
+            {
+              "name": "email",
+              "type": {
+                "kind": "domain",
+                "ref": "public.email_address",
+                "base": "citext"
+              }
+            },
+            {
+              "name": "display_name",
+              "type": {
+                "kind": "domain",
+                "ref": "public.display_name",
+                "base": "text"
+              }
+            },
+            {
+              "name": "phone",
+              "type": {
+                "kind": "domain",
+                "ref": "public.phone_e164",
+                "base": "text"
+              },
+              "nullable": true
+            },
+            {
+              "name": "bio",
+              "type": {
+                "kind": "domain",
+                "ref": "public.bio_text",
+                "base": "text"
+              },
+              "nullable": true
+            },
+            {
+              "name": "avatar_url",
+              "type": {
+                "kind": "domain",
+                "ref": "public.http_url",
+                "base": "text"
+              },
+              "nullable": true
+            },
+            {
+              "name": "locale",
+              "type": {
+                "kind": "domain",
+                "ref": "public.locale_tag",
+                "base": "text"
+              },
+              "defaultExpr": "'da-dk'::text"
+            },
+            {
+              "name": "home_location",
+              "type": "public.geography",
+              "nullable": true
+            },
+            {
+              "name": "is_deleted",
+              "type": "bool",
+              "defaultExpr": "false"
+            }
+          ],
+          "primaryKey": {
+            "name": "user_versions_pkey",
+            "columns": [
+              "user_id",
+              "version"
+            ]
+          },
+          "foreignKeys": [
+            {
+              "name": "user_versions_created_by_fkey",
+              "targetTable": "public.users",
+              "references": [
+                {
+                  "sourceColumn": "created_by",
+                  "targetColumn": "id"
+                }
+              ]
+            },
+            {
+              "name": "user_versions_user_id_fkey",
+              "targetTable": "public.users",
+              "references": [
+                {
+                  "sourceColumn": "user_id",
+                  "targetColumn": "id"
+                }
+              ]
+            },
+            {
+              "name": "user_versions_user_id_prev_version_fkey",
+              "targetTable": "public.user_versions",
+              "references": [
+                {
+                  "sourceColumn": "user_id",
+                  "targetColumn": "user_id"
+                },
+                {
+                  "sourceColumn": "user_id",
+                  "targetColumn": "version"
+                },
+                {
+                  "sourceColumn": "prev_version",
+                  "targetColumn": "user_id"
+                },
+                {
+                  "sourceColumn": "prev_version",
+                  "targetColumn": "version"
+                }
+              ]
+            }
+          ],
+          "uniqueConstraints": [
+            {
+              "name": "user_versions_user_id_prev_version_key"
+            },
+            {
+              "name": "user_versions_user_id_version_email_is_deleted_key"
+            }
+          ],
+          "checkConstraints": [
+            {
+              "name": "user_versions_check"
+            },
+            {
+              "name": "user_versions_version_check"
+            }
+          ]
+        },
+        {
+          "name": "public.users",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "defaultExpr": "gen_random_uuid()"
+            },
+            {
+              "name": "created_at",
+              "type": "timestamptz",
+              "defaultExpr": "now()"
+            },
+            {
+              "name": "current_version",
+              "type": {
+                "kind": "domain",
+                "ref": "public.version_no",
+                "base": "int8"
+              }
+            },
+            {
+              "name": "current_email",
+              "type": {
+                "kind": "domain",
+                "ref": "public.email_address",
+                "base": "citext"
+              }
+            },
+            {
+              "name": "current_is_deleted",
+              "type": "bool",
+              "defaultExpr": "false"
+            }
+          ],
+          "primaryKey": {
+            "name": "users_pkey",
+            "columns": [
+              "id"
+            ]
+          },
+          "foreignKeys": [
+            {
+              "name": "users_id_current_version_current_email_current_is_deleted_fkey",
+              "targetTable": "public.user_versions",
+              "references": [
+                {
+                  "sourceColumn": "id",
+                  "targetColumn": "user_id"
+                },
+                {
+                  "sourceColumn": "id",
+                  "targetColumn": "version"
+                },
+                {
+                  "sourceColumn": "id",
+                  "targetColumn": "email"
+                },
+                {
+                  "sourceColumn": "id",
+                  "targetColumn": "is_deleted"
+                },
+                {
+                  "sourceColumn": "current_version",
+                  "targetColumn": "user_id"
+                },
+                {
+                  "sourceColumn": "current_version",
+                  "targetColumn": "version"
+                },
+                {
+                  "sourceColumn": "current_version",
+                  "targetColumn": "email"
+                },
+                {
+                  "sourceColumn": "current_version",
+                  "targetColumn": "is_deleted"
+                },
+                {
+                  "sourceColumn": "current_email",
+                  "targetColumn": "user_id"
+                },
+                {
+                  "sourceColumn": "current_email",
+                  "targetColumn": "version"
+                },
+                {
+                  "sourceColumn": "current_email",
+                  "targetColumn": "email"
+                },
+                {
+                  "sourceColumn": "current_email",
+                  "targetColumn": "is_deleted"
+                },
+                {
+                  "sourceColumn": "current_is_deleted",
+                  "targetColumn": "user_id"
+                },
+                {
+                  "sourceColumn": "current_is_deleted",
+                  "targetColumn": "version"
+                },
+                {
+                  "sourceColumn": "current_is_deleted",
+                  "targetColumn": "email"
+                },
+                {
+                  "sourceColumn": "current_is_deleted",
+                  "targetColumn": "is_deleted"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "enums": [
+        {
+          "name": "public.delivery_option",
+          "fields": [
+            "pickup",
+            "local_delivery",
+            "shipping"
+          ]
+        },
+        {
+          "name": "public.listing_condition",
+          "fields": [
+            "new",
+            "like_new",
+            "good",
+            "fair",
+            "poor"
+          ]
+        },
+        {
+          "name": "public.listing_kind",
+          "fields": [
+            "sale",
+            "free",
+            "wanted",
+            "trade"
+          ]
+        },
+        {
+          "name": "public.listing_status",
+          "fields": [
+            "draft",
+            "active",
+            "reserved",
+            "sold",
+            "expired",
+            "removed"
+          ]
+        }
+      ]
+    }
+  ]
+}
