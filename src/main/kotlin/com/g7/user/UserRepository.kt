@@ -59,12 +59,24 @@ with u as (
     values (:id, 1, :email)
 )
 insert into user_versions (
-    user_id, version, email, display_name, phone, locale, home_location
+    user_id,
+    version,
+    email,
+    display_name,
+    phone,
+    locale,
+    home_location
 )
 values (
-    :id, 1, :email, :display_name, :phone, :locale,
+    :id,
+    1,
+    :email,
+    :display_name,
+    :phone,
+    :locale,
     cast(st_setsrid(
-        st_makepoint(cast(:lon as float8), cast(:lat as float8)), 4326
+        st_makepoint(cast(:lon as float8),
+        cast(:lat as float8)), 4326
     ) as geography)
 )
 """
@@ -73,17 +85,41 @@ private const val EDIT = """
 with cur as (
     select v.*
     from user_versions v
-    join users u on u.id = v.user_id and u.current_version = v.version
-    where v.user_id = :id and v.version = :version
+    join
+        users u on u.id = v.user_id
+        and u.current_version = v.version
+    where
+        v.user_id = :id
+        and v.version = :version
     for update of u
 ), ins as (
     insert into user_versions (
-        user_id, version, prev_version, created_by, email, display_name,
-        phone, bio, avatar_url, locale, home_location, is_deleted
+        user_id,
+        version,
+        prev_version,
+        created_by,
+        email,
+        display_name,
+        phone,
+        bio,
+        avatar_url,
+        locale,
+        home_location,
+        is_deleted
     )
-    select user_id, version + 1, version, user_id, email,
-           coalesce(:display_name, display_name), coalesce(:phone, phone),
-           coalesce(:bio, bio), avatar_url, locale, home_location, is_deleted
+    select
+        user_id,
+        version + 1,
+        version,
+        user_id,
+        email,
+        coalesce(:display_name, display_name),
+        coalesce(:phone, phone),
+        coalesce(:bio, bio),
+        avatar_url,
+        locale,
+        home_location,
+        is_deleted
     from cur
     returning user_id, version, email, is_deleted
 )
@@ -96,10 +132,17 @@ where u.id = ins.user_id
 """
 
 private const val SELECT = """
-select user_id, version, cast(email as text) as email, display_name, phone,
-       bio, avatar_url, locale,
-       st_x(cast(home_location as geometry)) as lon,
-       st_y(cast(home_location as geometry)) as lat
+select
+    user_id,
+    version,
+    cast(email as text) as email,
+    display_name,
+    phone,
+    bio,
+    avatar_url,
+    locale,
+    st_x(cast(home_location as geometry)) as lon,
+    st_y(cast(home_location as geometry)) as lat
 from current_users
 where user_id = any(:ids)
 """

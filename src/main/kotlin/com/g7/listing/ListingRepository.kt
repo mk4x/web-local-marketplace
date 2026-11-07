@@ -140,18 +140,39 @@ with l as (
     insert into listings (id, seller_id) values (:id, :seller_id)
 ), v as (
     insert into listing_versions (
-        listing_id, version, created_by, title, description, category, tags,
-        kind, status, condition, price, price_negotiable, quantity, delivery,
-        location, pickup_address, visible_during
+        listing_id,
+        version,
+        created_by,
+        title,
+        description,
+        category,
+        tags,
+        kind,
+        status,
+        condition,
+        price,
+        price_negotiable,
+        quantity,
+        delivery,
+        location,
+        pickup_address,
+        visible_during
     )
     values (
-        :id, 1, :seller_id, :title, :description,
+        :id,
+        1,
+        :seller_id,
+        :title,
+        :description,
         cast(:category as category_path),
         cast(string_to_array(:tags, ',') as tag_list),
-        cast(:kind as listing_kind), 'active',
+        cast(:kind as listing_kind),
+        'active',
         cast(:condition as listing_condition),
-        case when cast(:price as numeric) is null then null
-             else cast(row(:price, lower(:currency)) as price) end,
+        case when cast(:price as numeric) is null
+             then null
+             else cast(row(:price, lower(:currency)) as price)
+        end,
         :price_negotiable, :quantity,
         cast(string_to_array(:delivery, ',') as delivery_option[]),
         cast(st_setsrid(st_makepoint(:lon, :lat), 4326) as geography),
@@ -161,16 +182,58 @@ with l as (
     returning *
 )
 insert into listings_current (
-    listing_id, seller_id, version, updated_at, title, description,
-    category, tags, attributes, image_urls, kind, status, condition, price,
-    budget, price_negotiable, quantity, delivery, location, pickup_address,
-    pickup_radius, visible_during, pickup_windows, relist_every, is_deleted
+    listing_id,
+    seller_id,
+    version,
+    updated_at,
+    title,
+    description,
+    category,
+    tags,
+    attributes,
+    image_urls,
+    kind,
+    status,
+    condition,
+    price,
+    budget,
+    price_negotiable,
+    quantity,
+    delivery,
+    location,
+    pickup_address,
+    pickup_radius,
+    visible_during,
+    pickup_windows,
+    relist_every,
+    is_deleted
 )
 select
-    listing_id, created_by, version, created_at, title, description,
-    category, tags, attributes, image_urls, kind, status, condition, price,
-    budget, price_negotiable, quantity, delivery, location, pickup_address,
-    pickup_radius, visible_during, pickup_windows, relist_every, is_deleted
+    listing_id,
+    created_by,
+    version,
+    created_at,
+    title,
+    description,
+    category,
+    tags,
+    attributes,
+    image_urls,
+    kind,
+    status,
+    condition,
+    price,
+    budget,
+    price_negotiable,
+    quantity,
+    delivery,
+    location,
+    pickup_address,
+    pickup_radius,
+    visible_during,
+    pickup_windows,
+    relist_every,
+    is_deleted
 from v
 """
 
@@ -184,23 +247,65 @@ with cur as (
     for update
 ), v as (
     insert into listing_versions (
-        listing_id, version, prev_version, created_by, change_reason,
-        title, description, category, tags, attributes, image_urls, kind,
-        status, condition, price, budget, price_negotiable, quantity,
-        delivery, location, pickup_address, pickup_radius, visible_during,
-        pickup_windows, relist_every, is_deleted
+        listing_id,
+        version,
+        prev_version,
+        created_by,
+        change_reason,
+        title,
+        description,
+        category,
+        tags,
+        attributes,
+        image_urls,
+        kind,
+        status,
+        condition,
+        price,
+        budget,
+        price_negotiable,
+        quantity,
+        delivery,
+        location,
+        pickup_address,
+        pickup_radius,
+        visible_during,
+        pickup_windows,
+        relist_every,
+        is_deleted
     )
     select
-        listing_id, version + 1, version, seller_id, :change_reason,
-        coalesce(:title, title), coalesce(:description, description),
-        category, tags, attributes, image_urls, kind,
-        coalesce(cast(:status as listing_status), status), condition,
-        case when cast(:price as numeric) is null then price
-             else cast(row(:price, (price).currency) as price) end,
-        budget, coalesce(:price_negotiable, price_negotiable),
-        coalesce(:quantity, quantity), delivery, location, pickup_address,
-        pickup_radius, visible_during, pickup_windows, relist_every,
-        coalesce(cast(:status as listing_status), status) = 'removed'
+        listing_id,
+        version + 1,
+        version,
+        seller_id,
+        :change_reason,
+        coalesce(:title, title),
+        coalesce(:description, description),
+        category,
+        tags,
+        attributes,
+        image_urls,
+        kind,
+        coalesce(cast(:status as listing_status), status),
+        condition,
+        case when cast(:price as numeric) is null
+            then price
+            else cast(row(:price, (price).currency) as price)
+        end,
+        budget,
+        coalesce(:price_negotiable, price_negotiable),
+        coalesce(:quantity, quantity),
+        delivery,
+        location,
+        pickup_address,
+        pickup_radius,
+        visible_during,
+        pickup_windows,
+        relist_every,
+        coalesce(cast(:status as listing_status),
+        status
+    ) = 'removed'
     from cur
     returning *
 )
@@ -219,8 +324,14 @@ where c.listing_id = v.listing_id
 """
 
 private const val SELECT = """
-select l.listing_id, l.seller_id, u.display_name as seller_name, l.version,
-       l.updated_at, l.title, l.description,
+select
+    l.listing_id,
+        l.seller_id,
+        u.display_name as seller_name,
+        l.version,
+       l.updated_at,
+        l.title,
+        l.description,
        cast(l.category as text) as category,
        cast(l.tags as text[]) as tags,
        cast(l.kind as text) as kind,
@@ -228,7 +339,8 @@ select l.listing_id, l.seller_id, u.display_name as seller_name, l.version,
        cast(l.condition as text) as condition,
        (l.price).amount as price_amount,
        (l.price).currency as price_currency,
-       l.price_negotiable, l.quantity,
+       l.price_negotiable,
+        l.quantity,
        cast(l.delivery as text[]) as delivery,
        st_x(cast(l.location as geometry)) as lon,
        st_y(cast(l.location as geometry)) as lat
@@ -238,11 +350,13 @@ where l.listing_id = any(:ids)
 """
 
 private const val SEARCH = """
-select l.listing_id, l.title,
-       (l.price).amount as price_amount,
-       (l.price).currency as price_currency,
-       cast(l.image_urls[1] as text) as thumbnail,
-       st_distance(l.location, p.pt) as distance_m
+select
+    l.listing_id,
+    l.title,
+    (l.price).amount as price_amount,
+    (l.price).currency as price_currency,
+    cast(l.image_urls[1] as text) as thumbnail,
+    st_distance(l.location, p.pt) as distance_m
 from current_listings l
 cross join (
     select cast(st_setsrid(st_makepoint(:lon, :lat), 4326) as geography) as pt
@@ -250,23 +364,39 @@ cross join (
 cross join (select websearch_to_tsquery('simple', :q) as tsq) q
 where l.status = 'active'
   and l.visible_during @> now()
-  and (q.tsq is null or l.search_vector @@ q.tsq)
-  and (cast(:category as ltree) is null
-       or l.category <@ cast(:category as ltree))
-  and (cast(:kind as text) is null or l.kind = cast(:kind as listing_kind))
-  and (cast(:min_price as numeric) is null
-       or (l.price).amount >= :min_price)
-  and (cast(:max_price as numeric) is null
-       or (l.price).amount <= :max_price)
-  and (cast(:radius_m as integer) is null
-       or st_dwithin(l.location, p.pt, :radius_m))
+  and (
+      q.tsq is null
+      or l.search_vector @@ q.tsq
+  ) and (
+      cast(:category as ltree) is null
+      or l.category <@ cast(:category as ltree)
+  )
+  and (
+      cast(:kind as text) is null
+      or l.kind = cast(:kind as listing_kind)
+  ) and (
+      cast(:min_price as numeric) is null
+      or (l.price).amount >= :min_price
+  ) and (
+      cast(:max_price as numeric) is null
+      or (l.price).amount <= :max_price
+  )
+  and (
+      cast(:radius_m as integer) is null
+      or st_dwithin(l.location, p.pt, :radius_m)
+  )
 order by ts_rank(l.search_vector, q.tsq) desc, l.location <-> p.pt
 limit :limit offset :offset
 """
 
 private const val HISTORY = """
-select version, created_at, change_reason, cast(status as text) as status,
-       title, (price).amount as price_amount
+select
+    version,
+    created_at,
+    change_reason,
+    cast(status as text) as status,
+    title,
+    (price).amount as price_amount
 from listing_versions
 where listing_id = :id
 order by version desc
