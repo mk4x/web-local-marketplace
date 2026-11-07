@@ -44,6 +44,7 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation(kotlin("test-junit5"))
+    testImplementation("org.testcontainers:testcontainers-postgresql:2.0.5")
 }
 
 val generatedJooqDir = layout.buildDirectory.dir("generated/jooq")
@@ -72,6 +73,8 @@ jooq {
             database {
                 name = "org.jooq.meta.postgres.PostgresDatabase"
                 inputSchema = "public"
+                isIncludeDomains = false
+                isIncludeRoutines = false
             }
 
             generate {
@@ -105,6 +108,10 @@ tasks.named("compileKotlin") {
 
 tasks.named("compileJava") {
     dependsOn(tasks.named("jooqCodegen"))
+}
+
+tasks.named("runKtlintCheckOverMainSourceSet") {
+    dependsOn("jooqCodegen")
 }
 
 ktlint {
