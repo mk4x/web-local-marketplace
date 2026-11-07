@@ -18,12 +18,7 @@ object TestDb {
     private val container =
         PostgreSQLContainer(
             DockerImageName
-<<<<<<< HEAD
                 .parse("postgis/postgis:16-3.7-alpine")
-||||||| parent of e23fa9d (add integration test)
-=======
-                .parse("postgis/postgis:16-3.5-alpine")
->>>>>>> e23fa9d (add integration test)
                 .asCompatibleSubstituteFor("postgres"),
         ).apply { start() }
 
