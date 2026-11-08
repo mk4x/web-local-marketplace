@@ -24,5 +24,26 @@ curl -s http://localhost:8080/api/hello | jq .
 ```
 
 
-### Micro and soft
-something powershell
+### Windows (PS)
+Needs Docker Desktop running and JDK 21.
+
+Start pointing JAVA_HOME env to jdk-21
+```powershell
+$env:JAVA_HOME = "C:\path\to\jdk-21"
+```
+
+Then to start docker
+```powershell
+docker compose up db -d --wait         # start database
+$env:DB_URL = "jdbc:postgresql://localhost:5432/app"
+$env:DB_USER = "app"
+$env:DB_PASSWORD = "app"
+.\gradlew.bat --no-daemon buildFatJar  # migrations
+docker compose up -d --build --wait    # start app
+```
+
+Then test the hello endpoint
+```powershell
+Invoke-RestMethod http://localhost:8080/api/hello
+```
+
