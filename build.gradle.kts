@@ -110,10 +110,6 @@ tasks.named("compileJava") {
     dependsOn(tasks.named("jooqCodegen"))
 }
 
-tasks.named("runKtlintCheckOverMainSourceSet") {
-    dependsOn("jooqCodegen")
-}
-
 ktlint {
     filter {
         exclude("**/generated/**")
