@@ -32,6 +32,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core")
     implementation("io.ktor:ktor-server-netty")
     implementation("ch.qos.logback:logback-classic:1.5.37")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.22.4")
 
     // Database and migrations
     implementation("org.flywaydb:flyway-core:13.11.1")
@@ -44,6 +45,7 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation(kotlin("test-junit5"))
+    testImplementation("org.testcontainers:testcontainers-postgresql:2.0.5")
 }
 
 val generatedJooqDir = layout.buildDirectory.dir("generated/jooq")
@@ -72,6 +74,8 @@ jooq {
             database {
                 name = "org.jooq.meta.postgres.PostgresDatabase"
                 inputSchema = "public"
+                isIncludeDomains = false
+                isIncludeRoutines = false
             }
 
             generate {
