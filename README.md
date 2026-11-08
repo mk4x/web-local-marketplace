@@ -1,3 +1,15 @@
+## Quick start (Linux or Windows)
+
+Needs Docker, Node and JDK 21 (via `JAVA_HOME`).
+
+```sh
+node dev.mjs
+```
+
+Then open http://localhost:5173/hello. Ctrl+C stops React, and
+`docker compose down` stops the backend.
+
+
 Routes:
 
 | URL              | What it does                            |
