@@ -1,3 +1,5 @@
+@file:Suppress("TooManyFunctions")
+
 package com.g7.listing
 
 import com.g7.database.jooq.Tables.LISTINGS
