@@ -15,6 +15,7 @@
           packages = [
             pkgs.jdk21
             pkgs.gradle
+            pkgs.jq
           ];
 
           DB_URL = "jdbc:postgresql://localhost:5432/app";
