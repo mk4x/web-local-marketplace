@@ -154,6 +154,18 @@ class ListingTest : DbTest() {
     }
 
     @Test
+    fun `editing many listings is a single statement`() {
+        val many = (1..20).map { listing("Bicycle number $it") }
+        db.createListings(many)
+        val edits = many.map { edit(it, title = "Renamed ${it.title}") }
+
+        assertEquals(1, executions { editListings(edits) })
+
+        val found = find(*many.toTypedArray()).values
+        assertEquals(20, found.count { it.version == 2L })
+    }
+
+    @Test
     fun `one failing row rolls back the whole batch`() {
         val broken = bike.copy(id = UUID.randomUUID(), currency = "dkk1")
 
