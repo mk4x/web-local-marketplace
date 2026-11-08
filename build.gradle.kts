@@ -33,6 +33,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty")
     implementation("ch.qos.logback:logback-classic:1.5.37")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.22.4")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.22.4")
 
     // Database and migrations
     implementation("org.flywaydb:flyway-core:13.11.1")
