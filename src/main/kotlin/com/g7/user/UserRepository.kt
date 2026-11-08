@@ -170,33 +170,36 @@ private val EMAIL = column("email", String::class.java)
 private val LON = column("lon", Double::class.javaObjectType)
 private val LAT = column("lat", Double::class.javaObjectType)
 
-private fun NewUser.toRow() = mapOf(
-    USERS.ID.arg(id),
-    USER_VERSIONS.EMAIL.arg(email),
-    USER_VERSIONS.DISPLAY_NAME.arg(displayName),
-    USER_VERSIONS.PHONE.arg(phone),
-    USER_VERSIONS.LOCALE.arg(locale),
-    "lon" to lon,
-    "lat" to lat,
-)
+private fun NewUser.toRow() =
+    mapOf(
+        USERS.ID.arg(id),
+        USER_VERSIONS.EMAIL.arg(email),
+        USER_VERSIONS.DISPLAY_NAME.arg(displayName),
+        USER_VERSIONS.PHONE.arg(phone),
+        USER_VERSIONS.LOCALE.arg(locale),
+        "lon" to lon,
+        "lat" to lat,
+    )
 
-private fun ProfileEdit.toRow() = mapOf(
-    USERS.ID.arg(userId),
-    USER_VERSIONS.VERSION.arg(expectedVersion),
-    USER_VERSIONS.DISPLAY_NAME.arg(displayName),
-    USER_VERSIONS.PHONE.arg(phone),
-    USER_VERSIONS.BIO.arg(bio),
-)
+private fun ProfileEdit.toRow() =
+    mapOf(
+        USERS.ID.arg(userId),
+        USER_VERSIONS.VERSION.arg(expectedVersion),
+        USER_VERSIONS.DISPLAY_NAME.arg(displayName),
+        USER_VERSIONS.PHONE.arg(phone),
+        USER_VERSIONS.BIO.arg(bio),
+    )
 
-private fun Record.toUserProfile() = UserProfile(
-    id = read(CURRENT_USERS.USER_ID),
-    version = read(CURRENT_USERS.VERSION),
-    email = read(EMAIL),
-    displayName = read(CURRENT_USERS.DISPLAY_NAME),
-    phone = read(CURRENT_USERS.PHONE),
-    bio = read(CURRENT_USERS.BIO),
-    avatarUrl = read(CURRENT_USERS.AVATAR_URL),
-    locale = read(CURRENT_USERS.LOCALE),
-    lon = read(LON),
-    lat = read(LAT),
-)
+private fun Record.toUserProfile() =
+    UserProfile(
+        id = read(CURRENT_USERS.USER_ID),
+        version = read(CURRENT_USERS.VERSION),
+        email = read(EMAIL),
+        displayName = read(CURRENT_USERS.DISPLAY_NAME),
+        phone = read(CURRENT_USERS.PHONE),
+        bio = read(CURRENT_USERS.BIO),
+        avatarUrl = read(CURRENT_USERS.AVATAR_URL),
+        locale = read(CURRENT_USERS.LOCALE),
+        lon = read(LON),
+        lat = read(LAT),
+    )

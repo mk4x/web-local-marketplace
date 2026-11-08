@@ -442,90 +442,96 @@ private val DISTANCE_M = column("distance_m", Double::class.javaObjectType)
 private val LON = column("lon", Double::class.javaObjectType)
 private val LAT = column("lat", Double::class.javaObjectType)
 
-private fun NewListing.toRow() = mapOf(
-    LISTINGS.ID.arg(id),
-    LISTINGS.SELLER_ID.arg(sellerId),
-    LISTING_VERSIONS.TITLE.arg(title),
-    LISTING_VERSIONS.DESCRIPTION.arg(description),
-    LISTING_VERSIONS.CATEGORY.arg(category),
-    LISTING_VERSIONS.KIND.arg(kind),
-    LISTING_VERSIONS.CONDITION.arg(condition),
-    LISTING_VERSIONS.PRICE_NEGOTIABLE.arg(negotiable),
-    LISTING_VERSIONS.QUANTITY.arg(quantity),
-    "tags" to tags,
-    "delivery" to delivery.map { it.literal },
-    "price" to price,
-    "currency" to currency,
-    "lon" to lon,
-    "lat" to lat,
-    "city" to city,
-    "postal_code" to postalCode,
-    "country" to country,
-    "visible_days" to visibleDays,
-)
+private fun NewListing.toRow() =
+    mapOf(
+        LISTINGS.ID.arg(id),
+        LISTINGS.SELLER_ID.arg(sellerId),
+        LISTING_VERSIONS.TITLE.arg(title),
+        LISTING_VERSIONS.DESCRIPTION.arg(description),
+        LISTING_VERSIONS.CATEGORY.arg(category),
+        LISTING_VERSIONS.KIND.arg(kind),
+        LISTING_VERSIONS.CONDITION.arg(condition),
+        LISTING_VERSIONS.PRICE_NEGOTIABLE.arg(negotiable),
+        LISTING_VERSIONS.QUANTITY.arg(quantity),
+        "tags" to tags,
+        "delivery" to delivery.map { it.literal },
+        "price" to price,
+        "currency" to currency,
+        "lon" to lon,
+        "lat" to lat,
+        "city" to city,
+        "postal_code" to postalCode,
+        "country" to country,
+        "visible_days" to visibleDays,
+    )
 
-private fun SearchFilter.toRow() = mapOf(
-    "lon" to lon,
-    "lat" to lat,
-    "q" to text,
-    "category" to category,
-    "kind" to kind?.literal,
-    "min_price" to minPrice,
-    "max_price" to maxPrice,
-    "radius_m" to radiusM,
-    "page_size" to limit,
-    "page_offset" to offset,
-)
+private fun SearchFilter.toRow() =
+    mapOf(
+        "lon" to lon,
+        "lat" to lat,
+        "q" to text,
+        "category" to category,
+        "kind" to kind?.literal,
+        "min_price" to minPrice,
+        "max_price" to maxPrice,
+        "radius_m" to radiusM,
+        "page_size" to limit,
+        "page_offset" to offset,
+    )
 
-private fun ListingEdit.toRow() = mapOf(
-    LISTINGS_CURRENT.LISTING_ID.arg(listingId),
-    LISTINGS_CURRENT.SELLER_ID.arg(sellerId),
-    LISTINGS_CURRENT.VERSION.arg(expectedVersion),
-    LISTING_VERSIONS.CHANGE_REASON.arg(reason),
-    LISTINGS_CURRENT.TITLE.arg(title),
-    LISTINGS_CURRENT.DESCRIPTION.arg(description),
-    LISTINGS_CURRENT.PRICE_NEGOTIABLE.arg(negotiable),
-    LISTINGS_CURRENT.QUANTITY.arg(quantity),
-    LISTINGS_CURRENT.STATUS.arg(status),
-    "price" to price,
-)
+private fun ListingEdit.toRow() =
+    mapOf(
+        LISTINGS_CURRENT.LISTING_ID.arg(listingId),
+        LISTINGS_CURRENT.SELLER_ID.arg(sellerId),
+        LISTINGS_CURRENT.VERSION.arg(expectedVersion),
+        LISTING_VERSIONS.CHANGE_REASON.arg(reason),
+        LISTINGS_CURRENT.TITLE.arg(title),
+        LISTINGS_CURRENT.DESCRIPTION.arg(description),
+        LISTINGS_CURRENT.PRICE_NEGOTIABLE.arg(negotiable),
+        LISTINGS_CURRENT.QUANTITY.arg(quantity),
+        LISTINGS_CURRENT.STATUS.arg(status),
+        "price" to price,
+    )
 
-private fun Record.toListing() = Listing(
-    id = read(LISTINGS_CURRENT.LISTING_ID),
-    sellerId = read(LISTINGS_CURRENT.SELLER_ID),
-    sellerName = read(SELLER_NAME),
-    version = read(LISTINGS_CURRENT.VERSION),
-    updatedAt = read(LISTINGS_CURRENT.UPDATED_AT),
-    title = read(LISTINGS_CURRENT.TITLE),
-    description = read(LISTINGS_CURRENT.DESCRIPTION),
-    category = read(CATEGORY),
-    tags = read(TAGS).toList(),
-    kind = read(LISTINGS_CURRENT.KIND),
-    status = read(LISTINGS_CURRENT.STATUS),
-    condition = read(LISTINGS_CURRENT.CONDITION),
-    price = read(PRICE),
-    currency = read(CURRENCY),
-    negotiable = read(LISTINGS_CURRENT.PRICE_NEGOTIABLE),
-    quantity = read(LISTINGS_CURRENT.QUANTITY),
-    delivery = read(DELIVERY).toList(),
-    lon = read(LON),
-    lat = read(LAT),
-)
+private fun Record.toListing() =
+    Listing(
+        id = read(LISTINGS_CURRENT.LISTING_ID),
+        sellerId = read(LISTINGS_CURRENT.SELLER_ID),
+        sellerName = read(SELLER_NAME),
+        version = read(LISTINGS_CURRENT.VERSION),
+        updatedAt = read(LISTINGS_CURRENT.UPDATED_AT),
+        title = read(LISTINGS_CURRENT.TITLE),
+        description = read(LISTINGS_CURRENT.DESCRIPTION),
+        category = read(CATEGORY),
+        tags = read(TAGS).toList(),
+        kind = read(LISTINGS_CURRENT.KIND),
+        status = read(LISTINGS_CURRENT.STATUS),
+        condition = read(LISTINGS_CURRENT.CONDITION),
+        price = read(PRICE),
+        currency = read(CURRENCY),
+        negotiable = read(LISTINGS_CURRENT.PRICE_NEGOTIABLE),
+        quantity = read(LISTINGS_CURRENT.QUANTITY),
+        delivery = read(DELIVERY).toList(),
+        lon = read(LON),
+        lat = read(LAT),
+    )
 
-private fun Record.toListingHit() = ListingHit(
-    id = read(LISTINGS_CURRENT.LISTING_ID),
-    title = read(LISTINGS_CURRENT.TITLE),
-    price = read(PRICE),
-    currency = read(CURRENCY),
-    thumbnail = read(THUMBNAIL),
-    distanceM = read(DISTANCE_M),
-)
+private fun Record.toListingHit() =
+    ListingHit(
+        id = read(LISTINGS_CURRENT.LISTING_ID),
+        title = read(LISTINGS_CURRENT.TITLE),
+        price = read(PRICE),
+        currency = read(CURRENCY),
+        thumbnail = read(THUMBNAIL),
+        distanceM = read(DISTANCE_M),
+    )
 
-private fun Record.toListingRevision() = ListingRevision(
-    version = read(LISTING_VERSIONS.VERSION),
-    createdAt = read(LISTING_VERSIONS.CREATED_AT),
-    reason = read(LISTING_VERSIONS.CHANGE_REASON),
-    status = read(LISTING_VERSIONS.STATUS),
-    title = read(LISTING_VERSIONS.TITLE),
-    price = read(PRICE),
-)
+private fun Record.toListingRevision() =
+    ListingRevision(
+        version = read(LISTING_VERSIONS.VERSION),
+        createdAt = read(LISTING_VERSIONS.CREATED_AT),
+        reason = read(LISTING_VERSIONS.CHANGE_REASON),
+        status = read(LISTING_VERSIONS.STATUS),
+        title = read(LISTING_VERSIONS.TITLE),
+        price = read(PRICE),
+    )
