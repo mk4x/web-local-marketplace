@@ -1,3 +1,5 @@
+package com.g7
+
 import io.ktor.http.ContentType
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
