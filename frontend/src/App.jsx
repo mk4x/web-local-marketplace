@@ -1,4 +1,5 @@
 import { Link, Route, Routes } from 'react-router'
+import HelloPage from './pages/HelloPage'
 
 let buttonClass = "px-3 py-3 bg-blue-300 rounded cursor-pointer"
 
@@ -20,6 +21,7 @@ function App() {
         <Routes>
           {/* <Route path="/" element={<BrowsePage />} /> */ }
           {/* <Route path="/listings/:id" element={<ListingPage />} /> */ }
+          <Route path="/hello" element={<HelloPage />} />
         </Routes>
       </main>
     </>
