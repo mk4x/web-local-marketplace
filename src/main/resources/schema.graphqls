@@ -1,0 +1,141 @@
+enum ListingKind { sale free wanted trade }
+
+enum ListingStatus { draft active reserved sold expired removed }
+
+enum ListingCondition { new like_new good fair poor }
+
+enum DeliveryOption { pickup local_delivery shipping }
+
+"Prices are decimal strings such as \"1200.00\", timestamps are ISO-8601."
+type Listing {
+  id: ID!
+  sellerId: ID!
+  sellerName: String!
+  version: Int!
+  updatedAt: String!
+  title: String!
+  description: String!
+  category: String!
+  tags: [String!]!
+  kind: ListingKind!
+  status: ListingStatus!
+  condition: ListingCondition
+  price: String
+  currency: String
+  negotiable: Boolean!
+  quantity: Int!
+  delivery: [DeliveryOption!]!
+  lon: Float
+  lat: Float
+  seller: User
+}
+
+type ListingHit {
+  id: ID!
+  title: String!
+  price: String
+  currency: String
+  thumbnail: String
+  distanceM: Float!
+  listing: Listing
+}
+
+type ListingRevision {
+  version: Int!
+  createdAt: String!
+  reason: String
+  status: ListingStatus!
+  title: String!
+  price: String
+}
+
+type User {
+  id: ID!
+  version: Int!
+  email: String!
+  displayName: String!
+  phone: String
+  bio: String
+  avatarUrl: String
+  locale: String!
+  lon: Float
+  lat: Float
+}
+
+input NewUserInput {
+  email: String!
+  displayName: String!
+  phone: String
+  locale: String
+  lon: Float
+  lat: Float
+}
+
+input ProfileEditInput {
+  userId: ID!
+  expectedVersion: Int!
+  displayName: String
+  phone: String
+  bio: String
+}
+
+input NewListingInput {
+  sellerId: ID!
+  title: String!
+  category: String!
+  lon: Float!
+  lat: Float!
+  city: String!
+  price: String
+  currency: String
+  description: String
+  tags: [String!]
+  kind: ListingKind
+  condition: ListingCondition
+  negotiable: Boolean
+  quantity: Int
+  delivery: [DeliveryOption!]
+  postalCode: String
+  country: String
+  visibleDays: Int
+}
+
+input ListingEditInput {
+  listingId: ID!
+  sellerId: ID!
+  expectedVersion: Int!
+  reason: String!
+  title: String
+  description: String
+  price: String
+  quantity: Int
+  negotiable: Boolean
+  status: ListingStatus
+}
+
+input SearchFilterInput {
+  lon: Float!
+  lat: Float!
+  text: String
+  category: String
+  kind: ListingKind
+  minPrice: String
+  maxPrice: String
+  radiusM: Int
+  limit: Int
+  offset: Int
+}
+
+type Query {
+  user(id: ID!): User
+  listing(id: ID!): Listing
+  searchListings(filter: SearchFilterInput!): [ListingHit!]!
+  listingHistory(id: ID!): [ListingRevision!]!
+}
+
+type Mutation {
+  createUser(input: NewUserInput!): User!
+  editProfile(input: ProfileEditInput!): User!
+  createListing(input: NewListingInput!): Listing!
+  editListing(input: ListingEditInput!): Listing
+}
