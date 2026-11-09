@@ -4,7 +4,9 @@ import { fileURLToPath } from 'node:url'
 
 process.chdir(dirname(fileURLToPath(import.meta.url)))
 
-const dbPort = '5432'
+// my postgres on my pc (mark) runs on 5432, so this would clash
+// this seems to fix it for both of us
+const dbPort = process.env.DB_PORT ?? '5432'
 const env = {
   ...process.env,
   DB_PORT: dbPort,

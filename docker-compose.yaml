@@ -20,7 +20,7 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "3000:80" # expose 
+      - "3000:80"
     depends_on:
       app:
         condition: service_healthy
