@@ -22,6 +22,8 @@ const gradle = process.platform === 'win32' ? '.\\gradlew.bat' : './gradlew'
 
 run('docker compose up db -d --wait')
 run(`${gradle} --no-daemon buildFatJar`)
-run('docker compose up -d --build --wait')
+// this would run react on 3000 without app as it would start
+// all sservices. just run the "app" that is the backend
+run('docker compose up app -d --build --wait')
 run('npm --prefix frontend install')
 run('npm --prefix frontend run dev')
