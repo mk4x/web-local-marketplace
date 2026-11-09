@@ -12,3 +12,5 @@ kls_database.db
 .project
 .settings
 bin/
+
+node_modules
