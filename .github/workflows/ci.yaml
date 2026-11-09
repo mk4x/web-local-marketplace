@@ -29,6 +29,30 @@ jobs:
       - name: Run ktlint
         run: ./gradlew ktlintCheck
 
+  frontend-lint:
+    name: Lint (frontend)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run oxlint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
   detekt:
     name: Static analysis (detekt)
     runs-on: ubuntu-latest
