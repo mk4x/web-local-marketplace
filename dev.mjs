@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 process.chdir(dirname(fileURLToPath(import.meta.url)))
 
-const dbPort = '15432'
+const dbPort = '5432'
 const env = {
   ...process.env,
   DB_PORT: dbPort,
