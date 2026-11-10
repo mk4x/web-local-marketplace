@@ -1,11 +1,14 @@
 package com.g7.db
 
 import com.fasterxml.jackson.databind.json.JsonMapper
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import org.jooq.DSLContext
 import org.jooq.EnumType
 import org.jooq.Field
 import org.jooq.Record
 import org.jooq.Result
+import org.jooq.SQLDialect
 import org.jooq.impl.DSL
 
 typealias Row = Map<String, Any?>
@@ -42,5 +45,30 @@ fun DSLContext.writeRows(
         if (missed != 0) {
             throw StaleVersionException("No row matched for $missed entries")
         }
+    }
+}
+
+private const val MAXIMUM_POOL_SIZE = 10
+
+class Database : AutoCloseable {
+    private val dataSource = HikariDataSource(
+        HikariConfig().apply {
+            jdbcUrl = System.getenv("DATABASE_URL")
+                ?: "jdbc:postgresql://localhost:5432/app"
+
+            username = System.getenv("DB_USER") ?: "app"
+            password = System.getenv("DB_PASSWORD") ?: "app"
+
+            maximumPoolSize = MAXIMUM_POOL_SIZE
+        },
+    )
+
+    val dsl: DSLContext = DSL.using(
+        dataSource,
+        SQLDialect.POSTGRES,
+    )
+
+    override fun close() {
+        dataSource.close()
     }
 }
