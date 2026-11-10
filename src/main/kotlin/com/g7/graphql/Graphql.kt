@@ -63,9 +63,11 @@ private const val LISTINGS = "listings"
 
 private val log = LoggerFactory.getLogger("graphql")
 
-private val mapper = JsonMapper()
-    .registerModule(kotlinModule { enable(KotlinFeature.NullIsSameAsDefault) })
-    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+private val mapper =
+    JsonMapper()
+        .registerModule(
+            kotlinModule { enable(KotlinFeature.NullIsSameAsDefault) },
+        ).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
 private data class GraphQlRequest(
     val query: String,
@@ -74,16 +76,20 @@ private data class GraphQlRequest(
 )
 
 fun Application.graphQl(db: DSLContext) {
-    val engine = GraphQL.newGraphQL(schema(db))
-        .defaultDataFetcherExceptionHandler(errors)
-        .build()
+    val engine =
+        GraphQL
+            .newGraphQL(schema(db))
+            .defaultDataFetcherExceptionHandler(errors)
+            .build()
     routing {
         post("/graphql") {
-            val request = parse(call.receiveText())
-                ?: return@post call.respond(HttpStatusCode.BadRequest)
-            val result = withContext(Dispatchers.IO) {
-                engine.execute(request.toInput(db))
-            }
+            val request =
+                parse(call.receiveText())
+                    ?: return@post call.respond(HttpStatusCode.BadRequest)
+            val result =
+                withContext(Dispatchers.IO) {
+                    engine.execute(request.toInput(db))
+                }
             call.respondText(
                 mapper.writeValueAsString(result.toSpecification()),
                 ContentType.Application.Json,
@@ -96,7 +102,8 @@ private fun parse(body: String) =
     runCatching { mapper.readValue<GraphQlRequest>(body) }.getOrNull()
 
 private fun GraphQlRequest.toInput(db: DSLContext): ExecutionInput =
-    ExecutionInput.newExecutionInput()
+    ExecutionInput
+        .newExecutionInput()
         .query(query)
         .operationName(operationName)
         .variables(variables.orEmpty())
@@ -104,7 +111,8 @@ private fun GraphQlRequest.toInput(db: DSLContext): ExecutionInput =
         .build()
 
 private fun loaders(db: DSLContext): DataLoaderRegistry =
-    DataLoaderRegistry.newRegistry()
+    DataLoaderRegistry
+        .newRegistry()
         .register(USERS, loader({ db.findUsers(it) }) { it.id })
         .register(LISTINGS, loader({ db.findListings(it) }) { it.id })
         .build()
@@ -113,77 +121,76 @@ private fun <V : Any> loader(
     find: (List<UUID>) -> List<V>,
     idOf: (V) -> UUID,
 ): DataLoader<UUID, V> {
-    val batchLoader = org.dataloader.MappedBatchLoader<UUID, V> { ids ->
-        val values = find(ids.toList())
-        CompletableFuture.completedFuture(values.associateBy(idOf))
-    }
+    val batchLoader =
+        org.dataloader.MappedBatchLoader<UUID, V> { ids ->
+            val values = find(ids.toList())
+            CompletableFuture.completedFuture(values.associateBy(idOf))
+        }
 
     return DataLoaderFactory.newMappedDataLoader(batchLoader)
 }
 
 private fun schema(db: DSLContext): GraphQLSchema {
-    val sdl = checkNotNull(
-        GraphQlRequest::class.java.getResource("/schema.graphqls"),
-    ).readText()
+    val sdl =
+        checkNotNull(
+            GraphQlRequest::class.java.getResource("/schema.graphqls"),
+        ).readText()
     return SchemaGenerator()
         .makeExecutableSchema(SchemaParser().parse(sdl), wiring(db))
 }
 
 private fun wiring(db: DSLContext): RuntimeWiring =
-    RuntimeWiring.newRuntimeWiring()
+    RuntimeWiring
+        .newRuntimeWiring()
         .type(
             newTypeWiring("ListingKind")
                 .enumValues { ListingKind.valueOf(it) },
-        )
-        .type(
+        ).type(
             newTypeWiring("ListingStatus")
                 .enumValues { ListingStatus.valueOf(it) },
-        )
-        .type(
+        ).type(
             newTypeWiring("ListingCondition")
                 .enumValues { ListingCondition.valueOf(it) },
-        )
-        .type("Query") {
-            it.dataFetcher("user") { env ->
-                env.load<UserProfile>(USERS, env.id())
-            }.dataFetcher("listing") { env ->
-                env.load<Listing>(LISTINGS, env.id())
-            }.dataFetcher("searchListings") { env ->
-                db.searchListings(env.input<SearchFilter>("filter").capped())
-            }.dataFetcher("listingHistory") { env ->
-                db.listingHistory(env.id())
-            }
-        }
-        .type("Listing") {
+        ).type("Query") {
+            it
+                .dataFetcher("user") { env ->
+                    env.load<UserProfile>(USERS, env.id())
+                }.dataFetcher("listing") { env ->
+                    env.load<Listing>(LISTINGS, env.id())
+                }.dataFetcher("searchListings") { env ->
+                    db.searchListings(
+                        env.input<SearchFilter>("filter").capped(),
+                    )
+                }.dataFetcher("listingHistory") { env ->
+                    db.listingHistory(env.id())
+                }
+        }.type("Listing") {
             it.dataFetcher("seller") { env ->
                 val listing = checkNotNull(env.getSource<Listing>())
                 env.load<UserProfile>(USERS, listing.sellerId)
             }
-        }
-        .type("ListingHit") {
+        }.type("ListingHit") {
             it.dataFetcher("listing") { env ->
                 val hit = checkNotNull(env.getSource<ListingHit>())
                 env.load<Listing>(LISTINGS, hit.id)
             }
-        }
-        .type("Mutation") {
-            it.dataFetcher("createUser") { env ->
-                db.createUser(env.input())
-            }.dataFetcher("editProfile") { env ->
-                db.editProfile(env.input())
-            }.dataFetcher("createListing") { env ->
-                db.createListing(env.input())
-            }.dataFetcher("editListing") { env ->
-                db.editListing(env.input())
-            }
-        }
-        .build()
+        }.type("Mutation") {
+            it
+                .dataFetcher("createUser") { env ->
+                    db.createUser(env.input())
+                }.dataFetcher("editProfile") { env ->
+                    db.editProfile(env.input())
+                }.dataFetcher("createListing") { env ->
+                    db.createListing(env.input())
+                }.dataFetcher("editListing") { env ->
+                    db.editListing(env.input())
+                }
+        }.build()
 
 private fun <V> DataFetchingEnvironment.load(
     name: String,
     id: UUID,
-): CompletableFuture<V> =
-    checkNotNull(getDataLoader<UUID, V>(name)).load(id)
+): CompletableFuture<V> = checkNotNull(getDataLoader<UUID, V>(name)).load(id)
 
 private fun DataFetchingEnvironment.id(): UUID =
     UUID.fromString(checkNotNull(getArgument<String>("id")))
@@ -218,15 +225,23 @@ private fun DSLContext.editListing(edit: ListingEdit): Listing? {
     return findListings(listOf(edit.listingId)).firstOrNull()
 }
 
-private val errors = DataFetcherExceptionHandler { params ->
-    val cause = params.exception
-    val message = (cause as? StaleVersionException)?.message
-        ?: "Internal error".also { log.error("Data fetching failed", cause) }
-    val error = GraphqlErrorBuilder
-        .newError(params.dataFetchingEnvironment)
-        .message(message)
-        .build()
-    CompletableFuture.completedFuture(
-        DataFetcherExceptionHandlerResult.newResult(error).build(),
-    )
-}
+private val errors =
+    DataFetcherExceptionHandler { params ->
+        val cause = params.exception
+        val message =
+            (cause as? StaleVersionException)?.message
+                ?: "Internal error".also {
+                    log.error(
+                        "Data fetching failed",
+                        cause,
+                    )
+                }
+        val error =
+            GraphqlErrorBuilder
+                .newError(params.dataFetchingEnvironment)
+                .message(message)
+                .build()
+        CompletableFuture.completedFuture(
+            DataFetcherExceptionHandlerResult.newResult(error).build(),
+        )
+    }

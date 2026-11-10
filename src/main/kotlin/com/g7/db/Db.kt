@@ -51,22 +51,24 @@ fun DSLContext.writeRows(
 private const val MAXIMUM_POOL_SIZE = 10
 
 class Database : AutoCloseable {
-    private val dataSource = HikariDataSource(
-        HikariConfig().apply {
-            jdbcUrl = System.getenv("DATABASE_URL")
-                ?: "jdbc:postgresql://localhost:5432/app"
+    private val dataSource =
+        HikariDataSource(
+            HikariConfig().apply {
+                jdbcUrl = System.getenv("DATABASE_URL")
+                    ?: "jdbc:postgresql://localhost:5432/app"
 
-            username = System.getenv("DB_USER") ?: "app"
-            password = System.getenv("DB_PASSWORD") ?: "app"
+                username = System.getenv("DB_USER") ?: "app"
+                password = System.getenv("DB_PASSWORD") ?: "app"
 
-            maximumPoolSize = MAXIMUM_POOL_SIZE
-        },
-    )
+                maximumPoolSize = MAXIMUM_POOL_SIZE
+            },
+        )
 
-    val dsl: DSLContext = DSL.using(
-        dataSource,
-        SQLDialect.POSTGRES,
-    )
+    val dsl: DSLContext =
+        DSL.using(
+            dataSource,
+            SQLDialect.POSTGRES,
+        )
 
     override fun close() {
         dataSource.close()
