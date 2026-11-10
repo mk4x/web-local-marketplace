@@ -42,6 +42,8 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.14")
     implementation("org.jooq:jooq:3.21.9")
     implementation("org.postgresql:postgresql:42.7.14")
+    implementation("com.zaxxer:HikariCP:7.1.0")
+    runtimeOnly("org.postgresql:postgresql")
 
     jooqCodegen("org.postgresql:postgresql:42.7.14")
 
