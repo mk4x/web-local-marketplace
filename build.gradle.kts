@@ -54,6 +54,13 @@ dependencies {
 
 val generatedJooqDir = layout.buildDirectory.dir("generated/jooq")
 
+val dbUrl = providers.environmentVariable("DB_URL")
+.orElse("jdbc:postgresql://localhost:5432/app")
+val dbUser = providers.environmentVariable("DB_USER")
+.orElse("app")
+val dbPassword = providers.environmentVariable("DB_PASSWORD")
+.orElse("app")
+
 sourceSets {
     main {
         java.srcDir(generatedJooqDir)
@@ -64,12 +71,9 @@ jooq {
     configuration {
         jdbc {
             driver = "org.postgresql.Driver"
-            url = providers.environmentVariable("DB_URL").orNull
-                ?: "jdbc:postgresql://localhost:5432/marketplace"
-            user = providers.environmentVariable("DB_USER").orNull
-                ?: "postgres"
-            password = providers.environmentVariable("DB_PASSWORD").orNull
-                ?: "postgres"
+            url = dbUrl.get()
+            user = dbUser.get()
+            password = dbPassword.get()
         }
 
         generator {
