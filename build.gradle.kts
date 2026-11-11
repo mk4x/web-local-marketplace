@@ -52,7 +52,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-postgresql:2.0.5")
 }
 
-val generatedJooqDir = layout.buildDirectory.dir("generated/jooq")
+val generatedJooqDir = layout.projectDirectory.dir("src/main/generated")
 
 val dbUrl = providers.environmentVariable("DB_URL")
 .orElse("jdbc:postgresql://localhost:5432/app")
@@ -95,7 +95,7 @@ jooq {
 
             target {
                 packageName = "com.g7.database.jooq"
-                directory = generatedJooqDir.get().asFile.absolutePath
+                directory = generatedJooqDir.asFile.absolutePath
             }
         }
     }
@@ -107,20 +107,8 @@ flyway {
     password = System.getenv("DB_PASSWORD") ?: "app"
 }
 
-tasks.named("runKtlintCheckOverMainSourceSet") {
-    dependsOn("jooqCodegen")
-}
-
 tasks.named("jooqCodegen") {
     dependsOn("flywayMigrate")
-}
-
-tasks.named("compileKotlin") {
-    dependsOn(tasks.named("jooqCodegen"))
-}
-
-tasks.named("compileJava") {
-    dependsOn(tasks.named("jooqCodegen"))
 }
 
 ktlint {
