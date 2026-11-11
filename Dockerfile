@@ -5,7 +5,7 @@ COPY gradle gradle
 COPY build.gradle.kts settings.gradle.kts ./
 COPY src src
 RUN chmod +x gradlew
-RUN ./gradlew clean build shadowJar --no-daemon
+RUN ./gradlew shadowJar --no-daemon
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 RUN addgroup -S app && adduser -S -G app -H appuser
