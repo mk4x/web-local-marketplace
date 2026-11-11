@@ -254,16 +254,14 @@ private class ClientError(
     override fun getPath(): List<Any> = where
 }
 
-private val errors = object : DataFetcherExceptionHandler {
-    override fun handleException(
-        params: DataFetcherExceptionHandlerParameters,
-    ): CompletableFuture<DataFetcherExceptionHandlerResult> {
-        val cause = params.exception
-        val text = (cause as? StaleVersionException)?.message
-            ?: "Internal error".also { log.error("Fetch failed", cause) }
-        val error = ClientError(text, params.path.toList())
-        return CompletableFuture.completedFuture(
-            DataFetcherExceptionHandlerResult.newResult(error).build(),
-        )
-    }
+private val errors = DataFetcherExceptionHandler { params ->
+    val cause = params.exception
+    val text = (cause as? StaleVersionException)?.message
+        ?: "Internal error".also { log.error("Fetch failed", cause) }
+
+    val error = ClientError(text, params.path.toList())
+
+    CompletableFuture.completedFuture(
+        DataFetcherExceptionHandlerResult.newResult(error).build(),
+    )
 }
