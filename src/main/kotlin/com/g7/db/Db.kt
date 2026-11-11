@@ -49,18 +49,20 @@ fun DSLContext.writeRows(
 }
 
 private const val MAXIMUM_POOL_SIZE = 10
+private const val MINIMUM_IDLE = 2
 
 class Database : AutoCloseable {
     private val dataSource =
         HikariDataSource(
             HikariConfig().apply {
-                jdbcUrl = System.getenv("DATABASE_URL")
+                jdbcUrl = System.getenv("DB_URL")
                     ?: "jdbc:postgresql://localhost:5432/app"
 
                 username = System.getenv("DB_USER") ?: "app"
                 password = System.getenv("DB_PASSWORD") ?: "app"
 
                 maximumPoolSize = MAXIMUM_POOL_SIZE
+                minimumIdle = MINIMUM_IDLE
             },
         )
 
