@@ -13,9 +13,7 @@ for database entities.
 
 Do this:
 ```sh
-docker compose up db -d           # Start the the database
-./gradlew --no-daemon buildFatJar # Run migrations
-docker compose up -d              # Start application
+docker compose up -d --build              # Start and clean build application
 ```
 
 Then test the hello endpoint
@@ -34,12 +32,7 @@ $env:JAVA_HOME = "C:\path\to\jdk-21"
 
 Then to start docker
 ```powershell
-docker compose up db -d --wait         # start database
-$env:DB_URL = "jdbc:postgresql://localhost:5432/app"
-$env:DB_USER = "app"
-$env:DB_PASSWORD = "app"
-.\gradlew.bat --no-daemon buildFatJar  # migrations
-docker compose up -d --build --wait    # start app
+docker compose up -d --build    # Start and clean build app
 ```
 
 Then test the hello endpoint
