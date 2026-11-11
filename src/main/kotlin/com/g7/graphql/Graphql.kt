@@ -33,7 +33,6 @@ import graphql.ExecutionInput
 import graphql.GraphQL
 import graphql.GraphQLError
 import graphql.execution.DataFetcherExceptionHandler
-import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.DataFetcherExceptionHandlerResult
 import graphql.language.SourceLocation
 import graphql.schema.DataFetchingEnvironment
@@ -67,13 +66,14 @@ private const val LISTINGS = "listings"
 
 private val log = LoggerFactory.getLogger("graphql")
 
-private val mapper: ObjectMapper = JsonMapper()
-    .registerModule(
-        KotlinModule.Builder()
-            .configure(KotlinFeature.NullIsSameAsDefault, true)
-            .build(),
-    )
-    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+private val mapper: ObjectMapper =
+    JsonMapper()
+        .registerModule(
+            KotlinModule
+                .Builder()
+                .configure(KotlinFeature.NullIsSameAsDefault, true)
+                .build(),
+        ).configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
 private data class GraphQlRequest(
     val query: String,
@@ -82,16 +82,20 @@ private data class GraphQlRequest(
 )
 
 fun Application.graphQl(db: DSLContext) {
-    val engine = GraphQL.newGraphQL(schema(db))
-        .defaultDataFetcherExceptionHandler(errors)
-        .build()
+    val engine =
+        GraphQL
+            .newGraphQL(schema(db))
+            .defaultDataFetcherExceptionHandler(errors)
+            .build()
     routing {
         post("/graphql") {
-            val request = parse(call.receiveText())
-                ?: return@post call.respond(HttpStatusCode.BadRequest)
-            val result = withContext(Dispatchers.IO) {
-                engine.execute(request.toInput(db))
-            }
+            val request =
+                parse(call.receiveText())
+                    ?: return@post call.respond(HttpStatusCode.BadRequest)
+            val result =
+                withContext(Dispatchers.IO) {
+                    engine.execute(request.toInput(db))
+                }
             call.respondText(
                 mapper.writeValueAsString(result.toSpecification()),
                 ContentType.Application.Json,
@@ -105,7 +109,8 @@ private fun parse(body: String): GraphQlRequest? =
         .getOrNull()
 
 private fun GraphQlRequest.toInput(db: DSLContext): ExecutionInput =
-    ExecutionInput.newExecutionInput()
+    ExecutionInput
+        .newExecutionInput()
         .query(query)
         .operationName(operationName)
         .variables(variables.orEmpty())
@@ -113,30 +118,38 @@ private fun GraphQlRequest.toInput(db: DSLContext): ExecutionInput =
         .build()
 
 private fun loaders(db: DSLContext): DataLoaderRegistry {
-    val users = DataLoaderFactory.newMappedDataLoader<UUID, UserProfile> {
-        val found = db.findUsers(it.toList()).associateBy { user -> user.id }
-        CompletableFuture.completedFuture(found)
-    }
-    val listings = DataLoaderFactory.newMappedDataLoader<UUID, Listing> {
-        val found = db.findListings(it.toList()).associateBy { l -> l.id }
-        CompletableFuture.completedFuture(found)
-    }
-    return DataLoaderRegistry.newRegistry()
+    val users =
+        DataLoaderFactory.newMappedDataLoader<UUID, UserProfile> {
+            val found =
+                db.findUsers(it.toList()).associateBy { user ->
+                    user.id
+                }
+            CompletableFuture.completedFuture(found)
+        }
+    val listings =
+        DataLoaderFactory.newMappedDataLoader<UUID, Listing> {
+            val found = db.findListings(it.toList()).associateBy { l -> l.id }
+            CompletableFuture.completedFuture(found)
+        }
+    return DataLoaderRegistry
+        .newRegistry()
         .register(USERS, users)
         .register(LISTINGS, listings)
         .build()
 }
 
 private fun schema(db: DSLContext): GraphQLSchema {
-    val sdl = checkNotNull(
-        GraphQlRequest::class.java.getResource("/schema.graphqls"),
-    ).readText()
+    val sdl =
+        checkNotNull(
+            GraphQlRequest::class.java.getResource("/schema.graphqls"),
+        ).readText()
     return SchemaGenerator()
         .makeExecutableSchema(SchemaParser().parse(sdl), wiring(db))
 }
 
 private fun wiring(db: DSLContext): RuntimeWiring =
-    RuntimeWiring.newRuntimeWiring()
+    RuntimeWiring
+        .newRuntimeWiring()
         .type(byLiteral<ListingKind>())
         .type(byLiteral<ListingStatus>())
         .type(byLiteral<ListingCondition>())
@@ -162,8 +175,7 @@ private fun queries(
         .dataFetcher("searchListings") { env ->
             val filter = env.input(SearchFilter::class.java, "filter")
             db.searchListings(filter.capped())
-        }
-        .dataFetcher("listingHistory") { env -> db.listingHistory(env.id()) }
+        }.dataFetcher("listingHistory") { env -> db.listingHistory(env.id()) }
 
 private fun mutations(
     db: DSLContext,
@@ -172,14 +184,11 @@ private fun mutations(
     type
         .dataFetcher("createUser") { env ->
             db.createUser(env.input(NewUser::class.java))
-        }
-        .dataFetcher("editProfile") { env ->
+        }.dataFetcher("editProfile") { env ->
             db.editProfile(env.input(ProfileEdit::class.java))
-        }
-        .dataFetcher("createListing") { env ->
+        }.dataFetcher("createListing") { env ->
             db.createListing(env.input(NewListing::class.java))
-        }
-        .dataFetcher("editListing") { env ->
+        }.dataFetcher("editListing") { env ->
             db.editListing(env.input(ListingEdit::class.java))
         }
 
@@ -218,7 +227,10 @@ private fun <T> DataFetchingEnvironment.input(
 ): T = mapper.convertValue(getArgument<Any>(name), type)
 
 private fun SearchFilter.capped() =
-    copy(limit = limit.coerceIn(1, MAX_LIMIT), offset = offset.coerceAtLeast(0))
+    copy(
+        limit = limit.coerceIn(1, MAX_LIMIT),
+        offset = offset.coerceAtLeast(0),
+    )
 
 private fun DSLContext.createUser(user: NewUser): UserProfile {
     createUsers(listOf(user))
@@ -254,14 +266,16 @@ private class ClientError(
     override fun getPath(): List<Any> = where
 }
 
-private val errors = DataFetcherExceptionHandler { params ->
-    val cause = params.exception
-    val text = (cause as? StaleVersionException)?.message
-        ?: "Internal error".also { log.error("Fetch failed", cause) }
+private val errors =
+    DataFetcherExceptionHandler { params ->
+        val cause = params.exception
+        val text =
+            (cause as? StaleVersionException)?.message
+                ?: "Internal error".also { log.error("Fetch failed", cause) }
 
-    val error = ClientError(text, params.path.toList())
+        val error = ClientError(text, params.path.toList())
 
-    CompletableFuture.completedFuture(
-        DataFetcherExceptionHandlerResult.newResult(error).build(),
-    )
-}
+        CompletableFuture.completedFuture(
+            DataFetcherExceptionHandlerResult.newResult(error).build(),
+        )
+    }

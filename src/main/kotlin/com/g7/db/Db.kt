@@ -49,9 +49,6 @@ fun DSLContext.writeRows(
     }
 }
 
-private const val MAXIMUM_POOL_SIZE = 10
-private const val MINIMUM_IDLE = 2
-
 class Database {
     val dataSource: DataSource =
         HikariDataSource(

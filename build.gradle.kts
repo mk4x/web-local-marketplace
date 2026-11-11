@@ -54,12 +54,18 @@ dependencies {
 
 val generatedJooqDir = layout.projectDirectory.dir("src/main/generated")
 
-val dbUrl = providers.environmentVariable("DB_URL")
-.orElse("jdbc:postgresql://localhost:5432/app")
-val dbUser = providers.environmentVariable("DB_USER")
-.orElse("app")
-val dbPassword = providers.environmentVariable("DB_PASSWORD")
-.orElse("app")
+val dbUrl =
+    providers
+        .environmentVariable("DB_URL")
+        .orElse("jdbc:postgresql://localhost:5432/app")
+val dbUser =
+    providers
+        .environmentVariable("DB_USER")
+        .orElse("app")
+val dbPassword =
+    providers
+        .environmentVariable("DB_PASSWORD")
+        .orElse("app")
 
 sourceSets {
     main {

@@ -15,7 +15,8 @@ private const val DEFAULT_PORT = 8080
 fun main() {
     val port = System.getenv("PORT")?.toIntOrNull() ?: DEFAULT_PORT
     val database = Database()
-    Flyway.configure()
+    Flyway
+        .configure()
         .dataSource(database.dataSource)
         .load()
         .migrate()
