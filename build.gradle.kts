@@ -103,6 +103,10 @@ flyway {
     password = System.getenv("DB_PASSWORD") ?: "app"
 }
 
+tasks.named("runKtlintCheckOverMainSourceSet") {
+    dependsOn("jooqCodegen")
+}
+
 tasks.named("jooqCodegen") {
     dependsOn("flywayMigrate")
 }
