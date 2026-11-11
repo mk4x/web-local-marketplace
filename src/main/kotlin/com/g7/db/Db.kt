@@ -10,6 +10,7 @@ import org.jooq.Record
 import org.jooq.Result
 import org.jooq.SQLDialect
 import org.jooq.impl.DSL
+import javax.sql.DataSource
 
 typealias Row = Map<String, Any?>
 
@@ -51,28 +52,15 @@ fun DSLContext.writeRows(
 private const val MAXIMUM_POOL_SIZE = 10
 private const val MINIMUM_IDLE = 2
 
-class Database : AutoCloseable {
-    private val dataSource =
+class Database {
+    val dataSource: DataSource =
         HikariDataSource(
             HikariConfig().apply {
                 jdbcUrl = System.getenv("DB_URL")
-                    ?: "jdbc:postgresql://localhost:5432/app"
-
-                username = System.getenv("DB_USER") ?: "app"
-                password = System.getenv("DB_PASSWORD") ?: "app"
-
-                maximumPoolSize = MAXIMUM_POOL_SIZE
-                minimumIdle = MINIMUM_IDLE
+                username = System.getenv("DB_USER")
+                password = System.getenv("DB_PASSWORD")
             },
         )
 
-    val dsl: DSLContext =
-        DSL.using(
-            dataSource,
-            SQLDialect.POSTGRES,
-        )
-
-    override fun close() {
-        dataSource.close()
-    }
+    val dsl: DSLContext = DSL.using(dataSource, SQLDialect.POSTGRES)
 }
