@@ -27,7 +27,7 @@ type Listing {
   delivery: [DeliveryOption!]!
   lon: Float
   lat: Float
-  seller: User
+  seller: Seller
 }
 
 type ListingHit {
@@ -60,6 +60,14 @@ type User {
   locale: String!
   lon: Float
   lat: Float
+}
+
+"Used so can hide the phone number, email of a real user so its not exposed by a listing"
+type Seller {
+  id: ID!
+  displayName: String!
+  avatarUrl: String
+  bio: String
 }
 
 input NewUserInput {
