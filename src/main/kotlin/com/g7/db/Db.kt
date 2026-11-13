@@ -10,7 +10,6 @@ import org.jooq.Record
 import org.jooq.Result
 import org.jooq.SQLDialect
 import org.jooq.impl.DSL
-import javax.sql.DataSource
 
 typealias Row = Map<String, Any?>
 
@@ -53,7 +52,7 @@ private const val MAXIMUM_POOL_SIZE = 10
 private const val MINIMUM_IDLE = 2
 
 class Database : AutoCloseable {
-    private val dataSource =
+    val dataSource =
         HikariDataSource(
             HikariConfig().apply {
                 jdbcUrl = System.getenv("DB_URL")
