@@ -49,7 +49,7 @@ fun DSLContext.writeRows(
 }
 
 class Database : AutoCloseable {
-    private val dataSource =
+    val dataSource =
         HikariDataSource(
             HikariConfig().apply {
                 jdbcUrl = System.getenv("DB_URL")
