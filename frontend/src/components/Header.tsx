@@ -17,6 +17,7 @@ export default function Header({ onSearch }: Props) {
       </Link>
 
       <form
+        className="flex-1"
         onSubmit={(event) => {
           event.preventDefault()
           onSearch(text)
@@ -27,7 +28,7 @@ export default function Header({ onSearch }: Props) {
           placeholder="Search listings..."
           value={text}
           onChange={(event) => setText(event.target.value)}
-          className="rounded border border-gray-300 px-3 py-2"
+          className="w-full max-w-md rounded border border-gray-300 px-3 py-2"
         />
       </form>
 

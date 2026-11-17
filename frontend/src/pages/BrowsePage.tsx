@@ -5,6 +5,8 @@ import { useState } from 'react'
 
 type Props = { search: string }
 
+const inputClass = 'rounded border border-gray-300 px-3 py-2'
+
 export default function BrowsePage({ search }: Props) {
   const [filters, setFilters] = useState({
     kind: '',
@@ -19,10 +21,11 @@ export default function BrowsePage({ search }: Props) {
 
   return (
     <div>
-      <h1>Browse</h1>
+      <h1 className="mb-4 text-2xl font-bold">Browse</h1>
       <div className="flex gap-6">
         <div id="filter-section" className="flex w-1/4 flex-col gap-3">
           <select
+            className={inputClass}
             value={filters.kind}
             onChange={(event) =>
               setFilters({ ...filters, kind: event.target.value })
@@ -35,6 +38,7 @@ export default function BrowsePage({ search }: Props) {
             <option value="trade">Trade</option>
           </select>
           <select
+            className={inputClass}
             value={filters.category}
             onChange={(event) =>
               setFilters({ ...filters, category: event.target.value })
@@ -51,6 +55,8 @@ export default function BrowsePage({ search }: Props) {
           </select>
           <input
             type="number"
+            placeholder="Max price"
+            className={inputClass}
             value={filters.maxPrice}
             onChange={(event) =>
               setFilters({ ...filters, maxPrice: event.target.value })
