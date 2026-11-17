@@ -1,8 +1,13 @@
 import { gql } from './gql'
 
 export async function getListing(id: string) {
-  const data = await gql<{ listing: { id: string; title: string } | null }>(
-    `query ($id: ID!) { listing(id: $id) { id title } }`,
+  const data = await gql<{ listing: ListingDetail | null }>(
+    `query ($id: ID!) {
+    listing(id: $id) {
+      id sellerId sellerName version title description
+      category kind status price
+    }
+  }`,
     { id },
   )
   return data.listing
@@ -13,6 +18,20 @@ export type Listing = {
   title: string
   price: string | null
   distanceM: number
+}
+
+// used when going into a listing
+export type ListingDetail = {
+  id: string
+  sellerId: string
+  sellerName: string
+  version: number
+  title: string
+  description: string
+  category: string
+  kind: string
+  status: string
+  price: string | null
 }
 
 export type Filters = {
