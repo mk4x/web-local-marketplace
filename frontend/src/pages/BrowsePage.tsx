@@ -19,7 +19,7 @@ export default function BrowsePage({ search }: Props) {
       <div id="filter-section"></div>
       <div id="items-section">
         {data.length === 0 && <p>No listings found.</p>}
-        <div>
+        <div className="grid grid-cols-3 gap-4">
           {data.map((listing) => (
             <ListingCard
               key={listing.id}
