@@ -8,7 +8,7 @@ buildscript {
 }
 
 plugins {
-    kotlin("jvm") version "2.4.0"
+    kotlin("jvm") version "2.4.21"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
     id("io.gitlab.arturbosch.detekt") version "1.23.8"
     id("io.ktor.plugin") version "3.6.0"
@@ -33,6 +33,8 @@ dependencies {
     implementation("io.ktor:ktor-server-netty")
     implementation("ch.qos.logback:logback-classic:1.5.37")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.22.4")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.22.4")
+    implementation("com.graphql-java:graphql-java:26.1")
 
     // Database and migrations
     implementation("org.flywaydb:flyway-core:13.11.1")
@@ -40,6 +42,8 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.14")
     implementation("org.jooq:jooq:3.21.9")
     implementation("org.postgresql:postgresql:42.7.14")
+    implementation("com.zaxxer:HikariCP:7.1.0")
+    runtimeOnly("org.postgresql:postgresql")
 
     jooqCodegen("org.postgresql:postgresql:42.7.14")
 
@@ -48,7 +52,20 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers-postgresql:2.0.5")
 }
 
-val generatedJooqDir = layout.buildDirectory.dir("generated/jooq")
+val generatedJooqDir = layout.projectDirectory.dir("src/main/generated")
+
+val dbUrl =
+    providers
+        .environmentVariable("DB_URL")
+        .orElse("jdbc:postgresql://localhost:5432/app")
+val dbUser =
+    providers
+        .environmentVariable("DB_USER")
+        .orElse("app")
+val dbPassword =
+    providers
+        .environmentVariable("DB_PASSWORD")
+        .orElse("app")
 
 sourceSets {
     main {
@@ -60,12 +77,9 @@ jooq {
     configuration {
         jdbc {
             driver = "org.postgresql.Driver"
-            url = providers.environmentVariable("DB_URL").orNull
-                ?: "jdbc:postgresql://localhost:5432/marketplace"
-            user = providers.environmentVariable("DB_USER").orNull
-                ?: "postgres"
-            password = providers.environmentVariable("DB_PASSWORD").orNull
-                ?: "postgres"
+            url = dbUrl.get()
+            user = dbUser.get()
+            password = dbPassword.get()
         }
 
         generator {
@@ -87,7 +101,7 @@ jooq {
 
             target {
                 packageName = "com.g7.database.jooq"
-                directory = generatedJooqDir.get().asFile.absolutePath
+                directory = generatedJooqDir.asFile.absolutePath
             }
         }
     }
@@ -101,14 +115,6 @@ flyway {
 
 tasks.named("jooqCodegen") {
     dependsOn("flywayMigrate")
-}
-
-tasks.named("compileKotlin") {
-    dependsOn(tasks.named("jooqCodegen"))
-}
-
-tasks.named("compileJava") {
-    dependsOn(tasks.named("jooqCodegen"))
 }
 
 ktlint {
