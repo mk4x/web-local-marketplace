@@ -1,33 +1,28 @@
-import { Link, Route, Routes } from 'react-router'
-import HelloPage from './pages/HelloPage'
-import BrowsePage  from './pages/BrowsePage'
-import NotFoundPage from './pages/NotFoundPage'
+import { useState } from 'react'
+import { Route, Routes } from 'react-router'
+import Header from './components/Header'
+import BrowsePage from './pages/BrowsePage'
 import CreateListingPage from './pages/CreateListingPage'
+import HelloPage from './pages/HelloPage'
 import ListingPage from './pages/ListingPage'
+import NotFoundPage from './pages/NotFoundPage'
 import ProfilePage from './pages/ProfilePage'
 
-const buttonClass = 'px-3 py-3 bg-blue-300 rounded cursor-pointer'
-const headerClass = 'flex items-center gap-3 border-b border-gray-300 px-6 py-3'
-
 function App() {
+  // lives here so header can set it and browse page can read it
+  const [search, setSearch] = useState('')
+
   return (
     <>
-      <header className={headerClass}>
-        <Link to="/" className="font-bold">
-          Local Marketplace
-        </Link>
-        <input placeholder="Search listings..." />
-        <button className={buttonClass}><Link to="/sell">Sell</Link></button>
-        <button className={buttonClass}><Link to="/profile">Me</Link></button>
-      </header>
+      <Header onSearch={setSearch} />
       <main className="p-6">
         <Routes>
-          <Route path="/" element={<BrowsePage />} />
+          <Route path="/" element={<BrowsePage search={search} />} />
           <Route path="/listings/:id" element={<ListingPage />} />
           <Route path="/sell" element={<CreateListingPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-          <Route path="/hello" element={<HelloPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/hello" element={<HelloPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
     </>

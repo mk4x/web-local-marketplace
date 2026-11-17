@@ -1,19 +1,18 @@
 import { gql } from './gql'
 
-
 export async function getListing(id: string) {
-    const data = await gql<{ listing: {id: string, title: string} | null}>(
-        `query ($id: ID!) { listing(id: $id) { id title } }`,
-        { id },
-    )
-    return data.listing
+  const data = await gql<{ listing: { id: string; title: string } | null }>(
+    `query ($id: ID!) { listing(id: $id) { id title } }`,
+    { id },
+  )
+  return data.listing
 }
 
 export type Listing = {
-    id: string
-    title: string
-    price: string | null
-    distanceM: number
+  id: string
+  title: string
+  price: string | null
+  distanceM: number
 }
 
 export async function searchListings(text: string) {
@@ -23,7 +22,8 @@ export async function searchListings(text: string) {
     }`,
     {
       filter: {
-        lon: 10.39, lat: 55.4,
+        lon: 10.39,
+        lat: 55.4,
         text: text || null,
         limit: 50,
       },
