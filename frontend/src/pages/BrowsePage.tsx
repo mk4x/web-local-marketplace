@@ -25,6 +25,8 @@ export default function BrowsePage({ search }: Props) {
               key={listing.id}
               id={listing.id}
               title={listing.title}
+              price={listing.price}
+              distanceM={listing.distanceM}
             />
           ))}
         </div>
