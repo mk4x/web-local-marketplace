@@ -15,7 +15,13 @@ export type Listing = {
   distanceM: number
 }
 
-export async function searchListings(text: string) {
+export type Filters = {
+  kind: string
+  category: string
+  maxPrice: string
+}
+
+export async function searchListings(text: string, filters: Filters) {
   const data = await gql<{ searchListings: Listing[] }>(
     `query ($filter: SearchFilterInput!) {
       searchListings(filter: $filter) { id title price distanceM }
@@ -26,6 +32,9 @@ export async function searchListings(text: string) {
         lat: 55.4,
         text: text || null,
         limit: 50,
+        kind: filters.kind || null,
+        category: filters.category || null,
+        maxPrice: filters.maxPrice || null,
       },
     },
   )
