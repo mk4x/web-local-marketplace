@@ -3,7 +3,6 @@ import { Route, Routes } from 'react-router'
 import Header from './components/Header'
 import BrowsePage from './pages/BrowsePage'
 import CreateListingPage from './pages/CreateListingPage'
-import HelloPage from './pages/HelloPage'
 import ListingPage from './pages/ListingPage'
 import NotFoundPage from './pages/NotFoundPage'
 import ProfilePage from './pages/ProfilePage'
@@ -21,7 +20,6 @@ function App() {
           <Route path="/listings/:id" element={<ListingPage />} />
           <Route path="/sell" element={<CreateListingPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/hello" element={<HelloPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
