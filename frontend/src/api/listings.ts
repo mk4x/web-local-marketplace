@@ -1,8 +1,12 @@
+import { request } from 'graphql-request'
 import { ME } from '../me'
-import { gql } from './gql'
+
+// gql-request needs a full url, a relative one throws
+const url = window.location.origin + '/graphql'
 
 export async function getListing(id: string) {
-  const data = await gql<{ listing: ListingDetail | null }>(
+  const data = await request<{ listing: ListingDetail | null }>(
+    url,
     `query ($id: ID!) {
     listing(id: $id) {
       id sellerId sellerName version title description
@@ -50,7 +54,8 @@ export type Filters = {
 }
 
 export async function searchListings(text: string, filters: Filters) {
-  const data = await gql<{ searchListings: Listing[] }>(
+  const data = await request<{ searchListings: Listing[] }>(
+    url,
     `query ($filter: SearchFilterInput!) {
       searchListings(filter: $filter) { id title price distanceM }
     }`,
@@ -70,7 +75,8 @@ export async function searchListings(text: string, filters: Filters) {
 }
 
 export async function createListing(input: NewListing) {
-  const data = await gql<{ createListing: { id: string } }>(
+  const data = await request<{ createListing: { id: string } }>(
+    url,
     `mutation ($input: NewListingInput!) {
       createListing(input: $input) { id }
     }`,
