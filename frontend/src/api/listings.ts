@@ -1,3 +1,4 @@
+import { ME } from '../me'
 import { gql } from './gql'
 
 export async function getListing(id: string) {
@@ -34,6 +35,14 @@ export type ListingDetail = {
   price: string | null
 }
 
+export type NewListing = {
+  title: string
+  description: string
+  category: string
+  kind: string
+  price: string
+}
+
 export type Filters = {
   kind: string
   category: string
@@ -58,4 +67,23 @@ export async function searchListings(text: string, filters: Filters) {
     },
   )
   return data.searchListings
+}
+
+export async function createListing(input: NewListing) {
+  const data = await gql<{ createListing: { id: string } }>(
+    `mutation ($input: NewListingInput!) {
+      createListing(input: $input) { id }
+    }`,
+    {
+      input: {
+        ...input,
+        price: input.price || null,
+        sellerId: ME,
+        lon: 10.39,
+        lat: 55.4,
+        city: 'Odense',
+      },
+    },
+  )
+  return data.createListing.id
 }
