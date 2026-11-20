@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { searchListings } from '../api/listings'
+import { getCategories, searchListings } from '../api/listings'
 import ListingCard from '../components/ListingCard'
 import { useState } from 'react'
 
@@ -17,6 +17,11 @@ export default function BrowsePage({ search }: Props) {
   const { data, isPending, error } = useQuery({
     queryKey: ['listings', search, filters],
     queryFn: () => searchListings(search, filters),
+  })
+
+  const { data: categories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories,
   })
 
   return (
@@ -45,13 +50,11 @@ export default function BrowsePage({ search }: Props) {
             }
           >
             <option value="">Any category</option>
-            <option value="home">Home</option>
-            <option value="furniture">Furniture</option>
-            <option value="electronics">Electronics</option>
-            <option value="clothing">Clothing</option>
-            <option value="books">Books</option>
-            <option value="vehicles">Vehicles</option>
-            <option value="vehicles.bikes">Bikes</option>
+            {categories?.map((c) => (
+              <option key={c.path} value={c.path}>
+                {c.label}
+              </option>
+            ))}
           </select>
           <input
             type="number"
