@@ -27,9 +27,6 @@ if (count >= 5) {
   process.exit(0)
 }
 
-// categories. one line, windows cant do line breaks in the cmd (sorry mikkel)
-sql(`insert into categories (path, label) values ('home', 'Home'), ('furniture', 'Furniture'), ('electronics', 'Electronics'), ('clothing', 'Clothing'), ('books', 'Books'), ('vehicles', 'Vehicles'), ('vehicles.bikes', 'Bikes') on conflict do nothing`)
-
 // users. fails if the emails already exist, then run clear.mjs first
 const users = [
   { email: 'anna@test.dk', displayName: 'Anna Jensen' },

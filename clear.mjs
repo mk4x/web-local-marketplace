@@ -1,4 +1,4 @@
-// deletes all listings, users and categories in the db. asks first
+// deletes all listings and users in the db, categories stay. asks first
 // run from repo root
 import { execSync } from 'node:child_process'
 import readline from 'node:readline/promises'
@@ -9,7 +9,7 @@ rl.close()
 
 if (answer === 'y') {
   execSync(
-    'docker compose exec -T db psql -U app -d app -c "truncate listings_current, listing_versions, listings, user_versions, users, categories cascade"',
+    'docker compose exec -T db psql -U app -d app -c "truncate listings_current, listing_versions, listings, user_versions, users cascade"',
     { stdio: 'inherit' },
   )
   console.log('db cleared')
