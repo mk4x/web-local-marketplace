@@ -18,6 +18,13 @@ export async function getListing(id: string) {
   return data.listing
 }
 
+export async function getCategories() {
+  const data = await request<{
+    categories: { path: string; label: string }[]
+  }>(url, `{ categories { path label } }`)
+  return data.categories
+}
+
 export type Listing = {
   id: string
   title: string
