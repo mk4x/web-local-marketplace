@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.g7.category.categories
 import com.g7.database.jooq.enums.ListingCondition
 import com.g7.database.jooq.enums.ListingKind
 import com.g7.database.jooq.enums.ListingStatus
@@ -176,6 +177,7 @@ private fun queries(
             val filter = env.input(SearchFilter::class.java, "filter")
             db.searchListings(filter.capped())
         }.dataFetcher("listingHistory") { env -> db.listingHistory(env.id()) }
+        .dataFetcher("categories") { db.categories() }
 
 private fun mutations(
     db: DSLContext,

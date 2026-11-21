@@ -70,6 +70,11 @@ type Seller {
   bio: String
 }
 
+type Category {
+  path: String!
+  label: String!
+}
+
 input NewUserInput {
   email: String!
   displayName: String!
@@ -139,6 +144,7 @@ type Query {
   listing(id: ID!): Listing
   searchListings(filter: SearchFilterInput!): [ListingHit!]!
   listingHistory(id: ID!): [ListingRevision!]!
+  categories: [Category!]!
 }
 
 type Mutation {

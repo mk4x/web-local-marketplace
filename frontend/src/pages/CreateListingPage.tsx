@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { createListing } from '../api/listings'
+import { useQuery } from '@tanstack/react-query'
+import { createListing, getCategories } from '../api/listings'
 
 const inputClass = 'rounded border border-gray-300 px-3 py-2'
 const formClass = 'flex max-w-md flex-col gap-3'
@@ -15,6 +16,10 @@ export default function CreateListingPage() {
   })
   const [error, setError] = useState('')
   const navigate = useNavigate()
+  const { data: categories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+  })
 
   return (
     <>
@@ -54,13 +59,11 @@ export default function CreateListingPage() {
             setForm({ ...form, category: event.target.value })
           }
         >
-          <option value="home">Home</option>
-          <option value="furniture">Furniture</option>
-          <option value="electronics">Electronics</option>
-          <option value="clothing">Clothing</option>
-          <option value="books">Books</option>
-          <option value="vehicles">Vehicles</option>
-          <option value="vehicles.bikes">Bikes</option>
+          {categories?.map((c) => (
+            <option key={c.path} value={c.path}>
+              {c.label}
+            </option>
+          ))}
         </select>
 
         <select
